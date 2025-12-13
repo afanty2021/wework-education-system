@@ -1,0 +1,270 @@
+# 依赖项
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# 单元测试 / 覆盖率报告
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# 翻译
+*.mo
+*.pot
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask
+instance/
+.webassets-cache
+
+# Scrapy
+.scrapy
+
+# Sphinx 文档
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# PEP 582
+__pypackages__/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath
+*.sage.py
+
+# 环境变量
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder
+.spyderproject
+.spyproject
+
+# Rope
+.ropeproject
+
+# mkdocs
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre
+.pyre/
+
+# IDE 编辑器
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 操作系统
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 日志文件
+*.log
+logs/
+
+# 数据库
+*.db
+*.sqlite
+*.sqlite3
+
+# 缓存
+.cache/
+*.cache
+
+# 临时文件
+*.tmp
+*.temp
+temp/
+tmp/
+
+# 构建输出
+build/
+dist/
+out/
+target/
+
+# 包管理器锁文件（保留 package-lock.json 但忽略 yarn.lock）
+# yarn.lock
+
+# 测试覆盖率
+coverage/
+.nyc_output/
+
+# ESLint 缓存
+.eslintcache
+
+# TypeScript
+*.tsbuildinfo
+
+# 前端构建工具
+.next/
+.nuxt/
+.vuepress/dist
+.serverless/
+.fusebox/
+.dynamodb/
+
+# 静态资源
+uploads/
+public/uploads/
+
+# 备份文件
+*.bak
+*.backup
+
+# 压缩文件
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# 本地配置文件
+config.local.js
+config.local.ts
+config.local.json
+
+# 生成文件
+generated/
+generated-*
+
+# Docker
+.dockerignore
+
+# Kubernetes
+*.kubeconfig
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# 本地开发文件
+.local/
+localhost/
+local.*
+
+# AI 模型文件
+*.pkl
+*.model
+*.h5
+*.pb
+*.onnx
+*.ckpt
+*.pth
+*.pt
+
+# Jupyter 检查点
+.ipynb_checkpoints/
+
+# 飞桨模型
+*.pdparams
+*.pdopt
+
+# MindSpore 模型
+*.mindir
+
+# 本地数据文件
+data/
+dataset/
+datasets/
+raw_data/
+processed_data/
+
+# 实验结果
+experiments/
+results/
+outputs/
+
+# 文档构建
+docs/build/
+_site/
+
+# 私人文件
+private/
+confidential/
+secrets/
