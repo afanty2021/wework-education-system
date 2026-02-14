@@ -1,72 +1,107 @@
 """Authentication API Routes
 
 认证相关 API 路由
+
+企业微信OAuth2登录认证接口
 """
-from datetime import timedelta
-from typing import Annotated
-
+import logging
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.services.auth_service import AuthBusinessService
+from app.core.db import get_db
+from app.core.security import TokenResponse, get_current_user, TokenPayload
 
-from app.core.config import settings
-from app.core.security import (
-    Token,
-    User,
-    authenticate_user,
-    create_access_token,
-    get_current_active_user,
-)
-from app.schemas.user import TokenResponse, UserCreate, UserResponse
+logger = logging.getLogger(__name__)
 
-router = APIRouter()
+router = APIRouter(prefix="/auth", tags=["认证"])
 
 
-@router.post("/register", response_model=UserResponse, tags=["Authentication"])
-async def register(user_data: UserCreate) -> UserResponse:
-    """用户注册"""
-    # TODO: 实现用户注册逻辑
-    pass
+class WeWorkLoginRequest(BaseModel):
+    """企业微信登录请求"""
+    code: str
 
 
-@router.post("/token", response_model=TokenResponse, tags=["Authentication"])
-async def login(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
-) -> TokenResponse:
-    """用户登录获取 Token"""
-    user = authenticate_user(form_data.username, form_data.password)
-    if not user:
+class WeChatMiniAppLoginRequest(BaseModel):
+    """微信小程序登录请求"""
+    code: str
+    user_info: dict | None = None
+
+
+class UserInfoResponse(BaseModel):
+    """用户信息响应"""
+    id: int
+    name: str
+    avatar: str | None = None
+    role: str
+    wework_id: str | None = None
+
+
+@router.post("/wework", response_model=TokenResponse)
+async def wework_login(
+    request: WeWorkLoginRequest,
+    session: AsyncSession = Depends(get_db)
+):
+    """
+    企业微信OAuth2登录
+
+    参数:
+        code: 企业微信授权码
+
+    返回:
+        TokenResponse: 包含access_token
+    """
+    try:
+        token = await AuthBusinessService.wework_login(request.code, session)
+        return TokenResponse(access_token=token)
+    except Exception as e:
+        logger.error(f"企业微信登录失败: {e}")
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="用户名或密码错误",
-            headers={"WWW-Authenticate": "Bearer"},
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
         )
 
-    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user.username, "type": "access"},
-        expires_delta=access_token_expires,
-    )
 
-    return TokenResponse(access_token=access_token, token_type="bearer")
-
-
-@router.get("/me", response_model=UserResponse, tags=["Authentication"])
+@router.get("/me", response_model=UserInfoResponse)
 async def get_current_user_info(
-    current_user: Annotated[User, Depends(get_current_active_user)]
-) -> UserResponse:
-    """获取当前用户信息"""
-    return UserResponse.model_validate(current_user)
+    current_user: TokenPayload = Depends(get_current_user)
+):
+    """
+    获取当前用户信息
 
-
-@router.post("/refresh", response_model=TokenResponse, tags=["Authentication"])
-async def refresh_token(
-    current_user: Annotated[User, Depends(get_current_active_user)]
-) -> TokenResponse:
-    """刷新访问令牌"""
-    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": current_user.username, "type": "access"},
-        expires_delta=access_token_expires,
+    需要在实现User模型后启用认证
+    """
+    # TODO: 从数据库获取完整用户信息
+    return UserInfoResponse(
+        id=int(current_user.sub),
+        name="未知",
+        role=current_user.role
     )
 
-    return TokenResponse(access_token=access_token, token_type="bearer")
+
+@router.post("/refresh", response_model=TokenResponse)
+async def refresh_token(
+    current_user: TokenPayload = Depends(get_current_user)
+):
+    """
+    刷新访问令牌
+
+    Args:
+        current_user: 当前用户信息
+
+    Returns:
+        TokenResponse: 新的access_token
+    """
+    from datetime import timedelta
+    from app.core.config import settings
+
+    token = auth_service.create_access_token(
+        data={"sub": current_user.sub, "role": current_user.role},
+        expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    )
+    return TokenResponse(access_token=token)
+
+
+# 导入auth_service以使用refresh_token
+from app.core.security import auth_service as auth_service_module
+auth_service = auth_service_module
