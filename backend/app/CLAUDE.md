@@ -1,3 +1,215 @@
+# 合同管理功能实现总结
+
+## 实现时间
+2026-02-14
+
+## 实现内容
+
+### 1. Schema 层（`backend/app/schemas/contract.py`）
+
+**创建的模型：**
+- `ContractBase` - 合同基础模型
+- `ContractCreate` - 合同创建模型
+- `ContractUpdate` - 合同更新模型
+- `ContractResponse` - 合同响应模型
+- `ContractDeductHours` - 扣减课时模型
+- `ContractAddHours` - 追加课时模型
+
+**字段验证：**
+- 使用 `Field` 进行类型验证和约束
+- Decimal 类型支持 2 位小数
+- 支持可选字段和默认值
+
+### 2. CRUD 层（`backend/app/crud/contract.py`）
+
+**创建的类：**
+- `ContractCRUD` - 合同 CRUD 操作类
+
+**实现的方法：**
+- `get_all()` - 获取合同列表（支持筛选）
+- `get_by_id()` - 根据 ID 获取合同
+- `get_by_no()` - 根据合同编号获取
+- `create()` - 创建合同
+- `update()` - 更新合同
+- `delete()` - 删除合同
+- `count()` - 统计合同数量
+- `check_exists_by_no()` - 检查合同编号是否存在
+- `get_expiring_contracts()` - 获取即将到期的合同
+
+### 3. Service 层（`backend/app/services/contract_service.py`）
+
+**创建的类：**
+- `ContractService` - 合同业务服务类
+
+**创建的异常：**
+- `ContractServiceError` - 基础异常
+- `ContractNotFoundError` - 合同不存在
+- `ContractNoExistsError` - 合同编号已存在
+- `StudentNotFoundError` - 学员不存在
+- `CourseNotFoundError` - 课程不存在
+- `InsufficientHoursError` - 课时不足
+- `InvalidContractDataError` - 无效合同数据
+- `InvalidContractStatusError` - 无效合同状态
+
+**实现的服务：**
+
+1. **合同查询服务**
+   - `get_all_contracts()` - 获取合同列表
+   - `get_contract_by_id()` - 根据 ID 获取合同
+   - `get_contract_by_no()` - 根据编号获取合同
+   - `count_contracts()` - 统计合同数量
+
+2. **合同管理服务**
+   - `create_contract()` - 创建合同（验证学员、课程、金额计算）
+   - `update_contract()` - 更新合同
+   - `delete_contract()` - 删除合同
+
+3. **课时管理服务**
+   - `deduct_hours()` - 扣减课时（检查课时充足性）
+   - `add_hours()` - 追加课时（更新总课时和剩余课时）
+
+4. **到期检查服务**
+   - `check_expiry()` - 检查即将到期的合同
+   - `mark_as_expired()` - 标记合同为过期
+
+5. **金额计算服务**
+   - `calculate_total_amount()` - 计算合同总金额
+   - `calculate_remaining_value()` - 计算剩余课时价值
+   - `calculate_usage_percentage()` - 计算课时使用百分比
+
+### 4. API 层（`backend/app/api/v1/contracts.py`）
+
+**实现的端点：**
+
+1. **基础 CRUD**
+   - `GET /api/v1/contracts` - 获取合同列表
+   - `GET /api/v1/contracts/{id}` - 获取合同详情
+   - `GET /api/v1/contracts/no/{no}` - 根据编号查询
+   - `POST /api/v1/contracts` - 创建合同
+   - `PUT /api/v1/contracts/{id}` - 更新合同
+   - `DELETE /api/v1/contracts/{id}` - 删除合同
+
+2. **课时管理**
+   - `POST /api/v1/contracts/{id}/deduct` - 扣减课时
+   - `POST /api/v1/contracts/{id}/add-hours` - 追加课时
+
+3. **状态管理**
+   - `POST /api/v1/contracts/{id}/expire` - 标记为过期
+
+4. **统计功能**
+   - `GET /api/v1/contracts/expiring` - 获取即将到期的合同
+   - `GET /api/v1/contracts/stats/count` - 统计合同数量
+
+### 5. 测试（`backend/tests/test_contract.py`）
+
+**创建的测试类：**
+- `TestContractSchemas` - 测试 Schema 模型
+- `TestContractServiceCalculations` - 测试计算功能
+- `TestContractServiceValidation` - 测试验证功能
+
+**测试结果：**
+- 11 个测试全部通过
+- 所有语法检查通过
+
+## 业务规则实现
+
+1. **合同编号唯一性**
+   - 创建前检查合同编号是否已存在
+   - 使用 `ContractNoExistsError` 异常处理冲突
+
+2. **关联验证**
+   - 验证学员存在性
+   - 验证课程存在性（如果提供）
+
+3. **金额计算**
+   - 总金额 = 单价 × 总课时 - 折扣金额
+   - 创建时自动验证计算结果
+
+4. **课时管理**
+   - 剩余课时不能超过总课时
+   - 扣减前检查课时充足性
+   - 追加课时同时更新总课时和剩余课时
+
+5. **状态流转**
+   - 1: 生效（默认）
+   - 2: 完结
+   - 3: 退费
+   - 4: 过期
+
+6. **到期提醒**
+   - 支持自定义预警天数（默认 30 天）
+   - 自动标记已过期合同
+
+## 技术实现特点
+
+1. **异步操作**
+   - 所有数据库操作使用 `async/await`
+   - 使用 `AsyncSession` 进行数据库会话管理
+
+2. **SQLAlchemy 2.0 风格**
+   - 使用 `select()` 构建查询
+   - 使用 `and_()`, `or_()` 构建条件
+
+3. **类型提示**
+   - 完整的类型注解
+   - 使用 `List`, `Optional` 等泛型
+
+4. **错误处理**
+   - 自定义异常类层次结构
+   - API 层统一异常转换为 HTTP 状态码
+
+5. **文档字符串**
+   - 所有方法都有详细的 docstring
+   - 包含参数说明、返回值、异常说明
+
+## 代码质量
+
+- **SOLID 原则**
+  - 单一职责：每个类只负责一个层次的逻辑
+  - 开闭原则：通过异常扩展功能
+  - 依赖倒置：依赖抽象的 Service 层
+
+- **DRY 原则**
+  - CRUD 层可复用
+  - Service 层提供通用计算方法
+
+- **KISS 原则**
+  - 简洁明了的接口设计
+  - 清晰的命名规范
+
+- **YAGNI 原则**
+  - 只实现当前需要的功能
+  - 避免过度设计
+
+## 下一步建议
+
+1. **集成测试**
+   - 创建完整的集成测试
+   - 测试合同与排课、考勤的关联
+
+2. **性能优化**
+   - 添加数据库索引
+   - 实现查询结果缓存
+
+3. **功能扩展**
+   - 合同模板功能
+   - 合同导出功能
+   - 课时使用明细记录
+
+4. **通知集成**
+   - 到期提醒通知
+   - 课时不足提醒
+
+## 相关文件
+
+- `/backend/app/models/contract.py` - 数据模型
+- `/backend/app/schemas/contract.py` - Pydantic 模型
+- `/backend/app/crud/contract.py` - 数据访问层
+- `/backend/app/services/contract_service.py` - 业务逻辑层
+- `/backend/app/api/v1/contracts.py` - API 路由层
+- `/backend/tests/test_contract.py` - 单元测试
+
+
 <claude-mem-context>
 # Recent Activity
 
@@ -7,6 +219,11 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
+| #3721 | 3:00 PM | 🔵 | Database models validated - all 14 tables created successfully | ~241 |
+| #3698 | 2:14 PM | ⚖️ | Code quality review passed - all fixes approved | ~261 |
+| #3694 | 2:10 PM | ✅ | Production mode detection added to main.py | ~184 |
+| #3691 | 2:08 PM | 🔵 | Code review completed for Task 1.1 core configuration files | ~256 |
+| #3682 | 2:02 PM | 🟣 | Initial project commit with 112 files created | ~222 |
 | #3642 | 1:53 PM | 🟣 | FastAPI main application entry point implemented | ~216 |
 | #3637 | 1:50 PM | 🟣 | Backend project structure scaffolded with 57 Python files | ~243 |
 </claude-mem-context>

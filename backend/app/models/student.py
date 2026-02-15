@@ -1,26 +1,32 @@
-"""SQLModel Student Model
-
-学员数据模型
 """
-from datetime import datetime
-from typing import Optional
+学员模型
 
-from sqlmodel import Column, DateTime, Integer, String, Text, SQLModel
+表: students
+说明: 学员信息表
+"""
+
+from typing import Optional
+from sqlmodel import SQLModel, Field
+from datetime import datetime, date
 
 
 class Student(SQLModel, table=True):
     """学员模型"""
-    id: Optional[int] = Column(Integer, primary_key=True, index=True)
-    name: str = Column(String(50), nullable=False, index=True)
-    phone: str = Column(String(20), unique=True, nullable=False)
-    email: Optional[str] = Column(String(100), nullable=True)
-    wechat_openid: Optional[str] = Column(String(100), unique=True, nullable=True, index=True)
-    parent_phone: Optional[str] = Column(String(20), nullable=True)
-    avatar: Optional[str] = Column(String(500), nullable=True)
-    remark: Optional[str] = Column(Text, nullable=True)
-    status: str = Column(String(20), default="active")  # active, inactive, graduated
-    created_at: datetime = Column(DateTime, default=datetime.utcnow)
-    updated_at: Optional[datetime] = Column(DateTime, default=None, onupdate=datetime.utcnow)
+    __tablename__ = "students"
 
-    def __repr__(self):
-        return f"<Student(id={self.id}, name={self.name})>"
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str = Field(max_length=50, description="学员姓名")
+    nickname: Optional[str] = Field(default=None, max_length=50, description="昵称")
+    gender: Optional[int] = Field(default=None, description="性别: 1:男 2:女")
+    birthday: Optional[date] = Field(default=None, description="生日")
+    mobile: Optional[str] = Field(default=None, max_length=20, description="手机号")
+    parent_name: Optional[str] = Field(default=None, max_length=50, description="家长姓名")
+    parent_wework_id: Optional[str] = Field(default=None, max_length=64, description="家长企业微信ID")
+    parent_mobile: Optional[str] = Field(default=None, max_length=20, description="家长手机号")
+    source: Optional[str] = Field(default=None, max_length=50, description="来源: 线上推广/朋友介绍/地推等")
+    status: int = Field(default=1, description="状态: 1:潜在 2:在读 3:已流失")
+    tags: Optional[str] = Field(default=None, description="标签 JSON数组")
+    notes: Optional[str] = Field(default=None, description="备注")
+
+    created_at: datetime = Field(default_factory=datetime.now)
+    updated_at: datetime = Field(default_factory=datetime.now)

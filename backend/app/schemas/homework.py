@@ -5,7 +5,7 @@
 from datetime import datetime, date
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class HomeworkBase(BaseModel):
@@ -38,8 +38,7 @@ class HomeworkResponse(HomeworkBase):
     created_at: datetime
     updated_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class HomeworkSubmissionCreate(BaseModel):
@@ -60,5 +59,4 @@ class HomeworkSubmissionResponse(BaseModel):
     teacher_remark: Optional[str] = None
     submitted_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

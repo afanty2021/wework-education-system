@@ -7,6 +7,9 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
+| #3723 | 3:01 PM | 🟣 | Week 1 development completed - environment and core framework ready | ~457 |
+| #3710 | 2:29 PM | 🟣 | Week 1 Task 1.2 - WeChat Work OAuth2 authentication completed | ~317 |
+| #3703 | 2:18 PM | 🟣 | API dependencies module expanded with authentication and authorization | ~306 |
 | #3666 | 1:58 PM | 🟣 | API dependencies created for authentication and authorization | ~165 |
 | #3637 | 1:50 PM | 🟣 | Backend project structure scaffolded with 57 Python files | ~243 |
 </claude-mem-context>

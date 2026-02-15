@@ -8,7 +8,7 @@
 - Token依赖注入
 """
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from typing import Optional
 from jose import jwt, JWTError
 from passlib.context import CryptContext
@@ -68,7 +68,7 @@ class AuthService:
             str: JWT token
         """
         to_encode = data.copy()
-        expire = datetime.utcnow() + (
+        expire = datetime.now(UTC) + (
             expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         )
         to_encode.update({"exp": expire})

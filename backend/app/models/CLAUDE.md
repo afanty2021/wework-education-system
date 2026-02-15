@@ -7,6 +7,19 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
+| #3929 | 9:06 PM | 🔴 | Removed invalid decimal_places parameter from SQLModel fields | ~194 |
+| #3913 | 8:29 PM | 🔵 | Reviewed course model definitions | ~270 |
+| #3723 | 3:01 PM | 🟣 | Week 1 development completed - environment and core framework ready | ~457 |
+| #3717 | 2:32 PM | 🔄 | Attendance model updated with lesson package tracking | ~217 |
+| #3716 | " | 🔄 | MiniAppUser model refactored with Field syntax | ~201 |
+| #3715 | " | 🟣 | Homework models enhanced with SQLModel Field definitions | ~249 |
+| #3714 | " | 🔄 | Contract model refactored with modern SQLModel Field syntax | ~258 |
+| #3713 | " | 🔄 | Student model enhanced with comprehensive fields | ~218 |
+| #3712 | " | 🔄 | Payment models expanded with Refund model and enhanced fields | ~266 |
+| #3711 | " | 🟣 | Course models enhanced with SQLModel Field definitions | ~249 |
+| #3690 | 2:07 PM | ✅ | Fixed empty __init__.py module export files | ~179 |
+| #3689 | " | ✅ | Git commit for module export fixes | ~172 |
+| #3682 | 2:02 PM | 🟣 | Initial project commit with 112 files created | ~222 |
 | #3671 | 1:59 PM | 🟣 | MiniAppUser SQLModel created for WeChat/Alipay mini-program users | ~193 |
 | #3667 | 1:58 PM | 🟣 | Contract SQLModel created for course packages | ~222 |
 | #3665 | " | 🟣 | SQLModel Notification database model implemented | ~199 |

@@ -7,5 +7,8 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
+| #3909 | 8:23 PM | 🔵 | Reviewed course service create_course validation logic | ~232 |
+| #3710 | 2:29 PM | 🟣 | Week 1 Task 1.2 - WeChat Work OAuth2 authentication completed | ~317 |
+| #3701 | 2:17 PM | 🟣 | AuthBusinessService implemented with WeChat Work OAuth2 login | ~235 |
 | #3637 | 1:50 PM | 🟣 | Backend project structure scaffolded with 57 Python files | ~243 |
 </claude-mem-context>

@@ -9,17 +9,24 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.core.db import engine, create_db_and_tables
+from app.core.scheduler import scheduler, register_default_tasks
 from app.api.api_v1.router import api_router
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """应用生命周期管理"""
-    # Startup: 创建数据库表
-    create_db_and_tables()
+    # Startup: 创建数据库表并启动调度器
+    await create_db_and_tables()
+
+    # 注册并启动任务调度器
+    register_default_tasks()
+    scheduler.start()
+
     yield
-    # Shutdown: 清理资源
-    pass
+
+    # Shutdown: 关闭调度器
+    scheduler.shutdown(wait=True)
 
 
 def create_app() -> FastAPI:
@@ -57,11 +64,19 @@ app = create_app()
 
 
 if __name__ == "__main__":
+    import os
     import uvicorn
+
+    environment = os.getenv("ENVIRONMENT", "development")
+    is_production = environment == "production"
+
+    print(f"启动环境: {environment}")
+    if is_production:
+        print("警告: 生产模式启动，已禁用热重载")
 
     uvicorn.run(
         "app.main:app",
         host=settings.HOST,
         port=settings.PORT,
-        reload=settings.DEBUG,
+        reload=not is_production and settings.DEBUG,
     )

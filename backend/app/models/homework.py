@@ -1,41 +1,48 @@
-"""SQLModel Homework Model
-
-作业数据模型
 """
-from datetime import datetime, date
-from typing import Optional
+作业模型
 
-from sqlmodel import Column, DateTime, Integer, String, Date, Text, Boolean, ForeignKey, SQLModel
+表: homeworks, homework_submissions
+"""
+
+from typing import Optional
+from sqlmodel import SQLModel, Field
+from datetime import datetime
 
 
 class Homework(SQLModel, table=True):
     """作业模型"""
-    id: Optional[int] = Column(Integer, primary_key=True, index=True)
-    course_id: int = Column(Integer, ForeignKey("course.id"), nullable=False, index=True)
-    title: str = Column(String(200), nullable=False)
-    content: str = Column(Text, nullable=False)
-    attachments: Optional[str] = Column(Text, nullable=True)  # JSON格式存储附件路径
-    due_date: Optional[date] = Column(Date, nullable=True)
-    max_score: int = Column(Integer, default=100)
-    is_active: bool = Column(Boolean, default=True)
-    created_at: datetime = Column(DateTime, default=datetime.utcnow)
-    updated_at: Optional[datetime] = Column(DateTime, default=None, onupdate=datetime.utcnow)
+    __tablename__ = "homeworks"
 
-    def __repr__(self):
-        return f"<Homework(id={self.id}, title={self.title})>"
+    id: Optional[int] = Field(default=None, primary_key=True)
+    schedule_id: int = Field(foreign_key="schedules.id", description="排课ID")
+    title: str = Field(max_length=200, description="作业标题")
+    content: Optional[str] = Field(default=None, description="作业内容")
+    images: Optional[str] = Field(default=None, description="图片 JSON数组")
+    attachments: Optional[str] = Field(default=None, description="附件 JSON数组")
+    deadline: Optional[datetime] = Field(default=None, description="截止时间")
+    publish_time: Optional[datetime] = Field(default=None, description="发布时间")
+    created_by: int = Field(foreign_key="users.id", description="创建人")
+    status: int = Field(default=1, description="状态: 1:草稿 2:已发布 3:已结束")
+
+    created_at: datetime = Field(default_factory=datetime.now)
+    updated_at: datetime = Field(default_factory=datetime.now)
 
 
 class HomeworkSubmission(SQLModel, table=True):
     """作业提交模型"""
-    id: Optional[int] = Column(Integer, primary_key=True, index=True)
-    homework_id: int = Column(Integer, ForeignKey("homework.id"), nullable=False, index=True)
-    student_id: int = Column(Integer, ForeignKey("student.id"), nullable=False, index=True)
-    content: str = Column(Text, nullable=False)
-    attachments: Optional[str] = Column(Text, nullable=True)  # JSON格式存储附件路径
-    score: Optional[int] = Column(Integer, nullable=True)
-    teacher_remark: Optional[str] = Column(Text, nullable=True)
-    submitted_at: datetime = Column(DateTime, default=datetime.utcnow)
-    graded_at: Optional[datetime] = Column(DateTime, nullable=True)
+    __tablename__ = "homework_submissions"
 
-    def __repr__(self):
-        return f"<HomeworkSubmission(id={self.id}, homework_id={self.homework_id}, student_id={self.student_id})>"
+    id: Optional[int] = Field(default=None, primary_key=True)
+    homework_id: int = Field(foreign_key="homeworks.id", description="作业ID")
+    student_id: int = Field(foreign_key="students.id", description="学员ID")
+    content: Optional[str] = Field(default=None, description="提交内容")
+    images: Optional[str] = Field(default=None, description="提交图片")
+    attachments: Optional[str] = Field(default=None, description="提交附件")
+    submit_time: Optional[datetime] = Field(default=None, description="提交时间")
+    score: Optional[int] = Field(default=None, description="评分 1-100")
+    feedback: Optional[str] = Field(default=None, description="教师反馈")
+    graded_by: Optional[int] = Field(default=None, foreign_key="users.id", description="批改人")
+    graded_at: Optional[datetime] = Field(default=None, description="批改时间")
+    status: int = Field(default=1, description="状态: 1:待批改 2:已批改")
+
+    created_at: datetime = Field(default_factory=datetime.now)

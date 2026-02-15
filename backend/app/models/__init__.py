@@ -8,6 +8,7 @@ from app.models.attendance import Attendance
 from app.models.homework import Homework, HomeworkSubmission
 from app.models.notification import Notification
 from app.models.miniapp_user import MiniAppUser
+from app.models.task_log import TaskLog, TaskStatistics
 
 __all__ = [
     "User",
@@ -23,4 +24,6 @@ __all__ = [
     "HomeworkSubmission",
     "Notification",
     "MiniAppUser",
+    "TaskLog",
+    "TaskStatistics",
 ]

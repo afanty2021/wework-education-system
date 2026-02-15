@@ -1,24 +1,27 @@
-"""SQLModel User Model
-
-用户数据模型
 """
-from datetime import datetime
-from typing import Optional
+用户模型
 
-from sqlmodel import Column, DateTime, Integer, String, Boolean, SQLModel
+表: users
+说明: 教师/员工用户表
+"""
+
+from typing import Optional
+from sqlmodel import SQLModel, Field
+from datetime import datetime
 
 
 class User(SQLModel, table=True):
     """用户模型"""
-    id: Optional[int] = Column(Integer, primary_key=True, index=True)
-    username: str = Column(String(50), unique=True, index=True, nullable=False)
-    email: str = Column(String(100), unique=True, index=True, nullable=False)
-    hashed_password: str = Column(String(255), nullable=False)
-    full_name: Optional[str] = Column(String(100), nullable=True)
-    is_active: bool = Column(Boolean, default=True)
-    is_superuser: bool = Column(Boolean, default=False)
-    created_at: datetime = Column(DateTime, default=datetime.utcnow)
-    updated_at: Optional[datetime] = Column(DateTime, default=None, onupdate=datetime.utcnow)
+    __tablename__ = "users"
 
-    def __repr__(self):
-        return f"<User(id={self.id}, username={self.username})>"
+    id: Optional[int] = Field(default=None, primary_key=True)
+    wework_id: str = Field(max_length=64, unique=True, index=True, description="企业微信用户ID")
+    name: str = Field(max_length=50, description="姓名")
+    mobile: Optional[str] = Field(default=None, max_length=20, description="手机号")
+    avatar: Optional[str] = Field(default=None, max_length=500, description="头像URL")
+    role: str = Field(default="teacher", max_length=20, description="角色: admin/teacher/finance")
+    department_id: Optional[int] = Field(default=None, description="所属校区")
+    status: int = Field(default=1, description="状态: 1:active 0:inactive")
+
+    created_at: datetime = Field(default_factory=datetime.now, description="创建时间")
+    updated_at: datetime = Field(default_factory=datetime.now, description="更新时间")

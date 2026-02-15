@@ -1,3 +1,300 @@
+[根目录](../../../CLAUDE.md) > [backend](../../) > [app](../) > **core**
+
+# Core - 核心模块
+
+> 最后更新：2026-02-14 15:16:09
+
+## 模块职责
+
+`backend/app/core` 包含应用的核心功能模块，包括配置管理、数据库连接、安全认证、企业微信集成、Redis缓存和任务调度。
+
+## 目录结构
+
+```
+core/
+├── __init__.py
+├── config.py           # 配置管理
+├── db.py              # 数据库连接
+├── security.py         # 安全认证
+├── wework.py           # 企业微信集成
+├── redis.py            # Redis缓存
+└── scheduler.py        # 任务调度
+```
+
+## 配置管理 (config.py)
+
+### Settings 类
+
+**功能**：使用 Pydantic Settings 管理应用配置
+
+**主要配置项**：
+
+#### 应用配置
+- `PROJECT_NAME`: 项目名称
+- `VERSION`: 版本号
+- `DEBUG`: 调试模式
+- `HOST`: 服务器地址
+- `PORT`: 服务器端口
+
+#### 数据库配置
+- `DATABASE_URL`: 数据库连接URL
+- `DATABASE_PASSWORD`: 数据库密码
+- `get_database_url_with_password()`: 获取包含密码的完整URL
+
+#### Redis配置
+- `REDIS_URL`: Redis连接URL
+
+#### JWT配置
+- `SECRET_KEY`: JWT密钥
+- `ALGORITHM`: JWT算法
+- `ACCESS_TOKEN_EXPIRE_MINUTES`: Token过期时间
+
+#### 企业微信配置
+- `WEWORK_CORP_ID`: 企业微信企业ID
+- `WEWORK_AGENT_ID`: 企业微信应用ID
+- `WEWORK_SECRET`: 企业微信密钥
+- `WEWORK_TOKEN`: 企业微信Token
+- `WEWORK_ENCODING_AES_KEY`: 企业微信加密密钥
+
+#### 支付配置
+- `WECHAT_MCH_ID`: 微信商户号
+- `WECHAT_MCH_KEY`: 微信商户密钥
+- `WECHAT_NOTIFY_URL`: 微信回调URL
+- `ALIPAY_APP_ID`: 支付宝应用ID
+- `ALIPAY_PRIVATE_KEY`: 支付宝私钥
+- `ALIPAY_PUBLIC_KEY`: 支付宝公钥
+- `ALIPAY_NOTIFY_URL`: 支付宝回调URL
+
+#### Celery配置
+- `CELERY_BROKER_URL`: Celery Broker URL
+- `CELERY_RESULT_URL`: Celery Result URL
+
+#### 文件上传配置
+- `UPLOAD_DIR`: 上传目录
+- `MAX_FILE_SIZE`: 最大文件大小
+
+### 环境变量
+
+**必需的环境变量**：
+
+```bash
+# 数据库配置
+WEWORK_EDU_DB_USER=postgres
+WEWORK_EDU_DB_PASSWORD=your_password
+WEWORK_EDU_DB_HOST=localhost
+WEWORK_EDU_DB_PORT=5432
+WEWORK_EDU_DB_NAME=education_db
+
+# JWT配置
+WEWORK_EDU_SECRET_KEY=your_secret_key
+
+# 企业微信配置
+WEWORK_CORP_ID=your_corp_id
+WEWORK_SECRET=your_secret
+WEWORK_AGENT_ID=your_agent_id
+```
+
+**验证规则**：
+- 生产环境必须设置 `WEWORK_EDU_SECRET_KEY`
+- 生产环境必须设置数据库密码
+
+## 数据库连接 (db.py)
+
+### 数据库引擎
+
+**功能**：创建和管理数据库连接
+
+**主要组件**：
+- `engine`: SQLAlchemy引擎
+- `get_db()`: 依赖注入获取数据库会话
+- `create_db_and_tables()`: 创建数据库表
+- `get_engine()`: 获取数据库引擎
+
+**使用示例**：
+
+```python
+from app.core.db import get_db
+from sqlmodel import Session
+
+def api_endpoint(db: Session = Depends(get_db)):
+    # 使用数据库会话
+    users = db.exec(select(User)).all()
+```
+
+**连接池配置**：
+- `pool_size`: 5
+- `max_overflow`: 10
+- `pool_pre_ping`: True（连接健康检查）
+
+## 安全认证 (security.py)
+
+### AuthService 类
+
+**功能**：处理认证相关操作
+
+**主要方法**：
+
+#### 密码管理
+- `verify_password(plain_password, hashed_password)`: 验证密码
+- `get_password_hash(password)`: 生成密码哈希
+
+#### JWT Token管理
+- `create_access_token(data, expires_delta)`: 创建JWT token
+- `decode_token(token)`: 解码JWT token
+
+**使用示例**：
+
+```python
+from app.core.security import auth_service
+
+# 创建token
+token = auth_service.create_access_token(
+    data={"sub": "user_id", "role": "teacher"}
+)
+
+# 解码token
+payload = auth_service.decode_token(token)
+```
+
+### 依赖注入函数
+
+- `get_current_user()`: 获取当前用户
+- `get_current_active_user()`: 获取当前活跃用户
+
+## 企业微信集成 (wework.py)
+
+### WeWorkService 类
+
+**功能**：企业微信API集成
+
+**主要方法**：
+
+#### 获取Access Token
+- `get_access_token()`: 获取access_token（带缓存）
+- 自动处理token刷新（提前5分钟）
+
+#### 用户信息
+- `get_user_info(code)`: 通过授权码获取用户信息
+
+#### 消息发送
+- `send_message(user_id, content)`: 发送文本消息
+- `send_card_message(user_id, title, description, url)`: 发送卡片消息
+
+**使用示例**：
+
+```python
+from app.core.wework import wework_service
+
+# 获取用户信息
+user_info = await wework_service.get_user_info(code)
+
+# 发送消息
+await wework_service.send_message(
+    user_id="user_id",
+    content="您有新的课程安排"
+)
+```
+
+## Redis缓存 (redis.py)
+
+**功能**：Redis缓存管理
+
+**主要功能**：
+- 连接池管理
+- 缓存操作封装
+- 自动重连
+
+## 任务调度 (scheduler.py)
+
+**功能**：定时任务管理
+
+**主要功能**：
+- APScheduler配置
+- 任务注册
+- 任务执行监控
+
+## 测试与质量
+
+### 配置测试
+
+**测试文件**：`tests/test_config.py`
+
+**测试内容**：
+- 环境变量加载
+- 配置验证
+- 密码处理
+
+### 数据库测试
+
+**测试文件**：`tests/test_db.py`
+
+**测试内容**：
+- 连接创建
+- 会话管理
+- 连接池
+
+### 安全测试
+
+**测试文件**：`tests/test_security.py`
+
+**测试内容**：
+- 密码哈希
+- Token生成/验证
+
+## 常见问题
+
+### Q: 如何配置数据库连接？
+
+1. 设置环境变量 `WEWORK_EDU_DB_*`
+2. 使用 `get_database_url_with_password()` 获取完整URL
+3. 测试连接：`python -c "from app.core.db import engine; print(engine)`
+
+### Q: 如何配置企业微信？
+
+1. 在企业微信管理后台创建应用
+2. 获取 Corp ID、Secret、Agent ID
+3. 在 `.env` 文件中配置环境变量
+4. 测试连接：`python -c "from app.core.wework import wework_service; import asyncio; asyncio.run(wework_service.get_access_token())"`
+
+### Q: 如何生成JWT Token？
+
+```python
+from app.core.security import auth_service
+
+token = auth_service.create_access_token(
+    data={"sub": "user_id", "role": "teacher"}
+)
+```
+
+## 相关文件清单
+
+### 核心文件
+
+- `config.py` - 配置管理
+- `db.py` - 数据库连接
+- `security.py` - 安全认证
+- `wework.py` - 企业微信集成
+- `redis.py` - Redis缓存
+- `scheduler.py` - 任务调度
+
+### 配置文件
+
+- `../../.env.example` - 环境变量示例
+- `../../.env` - 环境变量（不提交到版本控制）
+
+## 变更记录
+
+### 2026-02-14 - 初始化文档
+
+- 创建 core 模块文档
+- 添加配置管理说明
+- 完成数据库连接文档
+- 添加安全认证文档
+- 完成企业微信集成文档
+
+---
+
+
 <claude-mem-context>
 # Recent Activity
 
@@ -7,10 +304,5 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
-| #3669 | 1:58 PM | 🟣 | WeChat Work SDK integration created | ~172 |
-| #3668 | " | 🟣 | APScheduler Task Scheduler implemented | ~223 |
-| #3652 | 1:55 PM | 🟣 | Security utilities module created | ~223 |
-| #3645 | 1:54 PM | 🟣 | Backend database connection module created | ~188 |
-| #3644 | " | 🟣 | Backend config module created with Pydantic Settings | ~322 |
-| #3637 | 1:50 PM | 🟣 | Backend project structure scaffolded with 57 Python files | ~243 |
+| #3878 | 6:28 PM | 🔵 | Reviewed backend Pydantic settings configuration | ~298 |
 </claude-mem-context>
