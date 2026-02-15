@@ -1,0 +1,231 @@
+/**
+ * 全局通用样式
+ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+  font-size: $font-size-base;
+  color: $text-primary;
+  background-color: $background-color;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+  height: 100%;
+}
+
+// 滚动条样式
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+
+  &:hover {
+    background: #a8a8a8;
+  }
+}
+
+// 文本溢出省略
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// 多行文本溢出
+.text-ellipsis-2 {
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+// Flex 布局辅助类
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+// 间距辅助类
+.mt-4 { margin-top: 4px; }
+.mt-8 { margin-top: 8px; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+.mt-20 { margin-top: 20px; }
+.mt-24 { margin-top: 24px; }
+
+.mb-4 { margin-bottom: 4px; }
+.mb-8 { margin-bottom: 8px; }
+.mb-12 { margin-bottom: 12px; }
+.mb-16 { margin-bottom: 16px; }
+.mb-20 { margin-bottom: 20px; }
+.mb-24 { margin-bottom: 24px; }
+
+.ml-4 { margin-left: 4px; }
+.ml-8 { margin-left: 8px; }
+.ml-12 { margin-left: 12px; }
+.ml-16 { margin-left: 16px; }
+.ml-20 { margin-left: 20px; }
+.ml-24 { margin-left: 24px; }
+
+.mr-4 { margin-right: 4px; }
+.mr-8 { margin-right: 8px; }
+.mr-12 { margin-right: 12px; }
+.mr-16 { margin-right: 16px; }
+.mr-20 { margin-right: 20px; }
+.mr-24 { margin-right: 24px; }
+
+.p-4 { padding: 4px; }
+.p-8 { padding: 8px; }
+.p-12 { padding: 12px; }
+.p-16 { padding: 16px; }
+.p-20 { padding: 20px; }
+.p-24 { padding: 24px; }
+
+// 文本对齐
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+// 文本颜色
+.text-primary { color: $primary-color; }
+.text-success { color: $success-color; }
+.text-warning { color: $warning-color; }
+.text-danger { color: $danger-color; }
+.text-info { color: $info-color; }
+.text-gray { color: $text-secondary; }
+
+// 字体大小
+.text-small { font-size: $font-size-small; }
+.text-base { font-size: $font-size-base; }
+.text-medium { font-size: $font-size-medium; }
+.text-large { font-size: $font-size-large; }
+
+// 字体粗细
+.font-medium { font-weight: $font-weight-primary; }
+.font-bold { font-weight: $font-weight-bold; }
+
+// 卡片样式
+.card {
+  background: $background-color-white;
+  border-radius: $border-radius-large;
+  box-shadow: $box-shadow-light;
+}
+
+// 页面容器
+.page-container {
+  padding: 20px;
+  background: $background-color;
+  min-height: calc(100vh - 60px);
+}
+
+// 表格操作栏
+.table-operations {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+// 表单弹窗
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+// 空状态
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: $text-secondary;
+
+  .empty-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    color: $border-color;
+  }
+
+  .empty-text {
+    font-size: $font-size-base;
+  }
+}
+
+// 状态标签
+.status-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: $border-radius-small;
+  font-size: $font-size-small;
+
+  &.status-1,
+  &.active,
+  &.published {
+    color: $success-color;
+    background-color: rgba($success-color, 0.1);
+  }
+
+  &.status-2,
+  &.inactive,
+  &.draft {
+    color: $info-color;
+    background-color: rgba($info-color, 0.1);
+  }
+
+  &.status-3,
+  &.pending {
+    color: $warning-color;
+    background-color: rgba($warning-color, 0.1);
+  }
+
+  &.status-4,
+  &.expired,
+  &.cancelled {
+    color: $danger-color;
+    background-color: rgba($danger-color, 0.1);
+  }
+
+  &.status-5 {
+    color: $primary-color;
+    background-color: rgba($primary-color, 0.1);
+  }
+}

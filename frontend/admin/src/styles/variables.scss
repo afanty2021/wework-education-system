@@ -1,0 +1,47 @@
+/**
+ * 全局样式变量
+ */
+
+// 主题色
+$primary-color: #409eff;
+$success-color: #67c23a;
+$warning-color: #e6a23c;
+$danger-color: #f56c6c;
+$info-color: #909399;
+
+// 中性色
+$text-primary: #303133;
+$text-regular: #606266;
+$text-secondary: #909399;
+$text-placeholder: #c0c4cc;
+
+$border-color: #dcdfe6;
+$border-color-light: #e4e7ed;
+$border-color-lighter: #ebeef5;
+
+$background-color: #f5f7fa;
+$background-color-white: #ffffff;
+
+// 字体
+$font-size-base: 14px;
+$font-size-small: 12px;
+$font-size-medium: 16px;
+$font-size-large: 18px;
+
+$font-weight-primary: 500;
+$font-weight-secondary: 400;
+$font-weight-bold: 700;
+
+// 圆角
+$border-radius-base: 4px;
+$border-radius-small: 2px;
+$border-radius-large: 8px;
+$border-radius-circle: 100%;
+
+// 阴影
+$box-shadow-base: 0 2px 4px rgba(0, 0, 0, 0.12);
+$box-shadow-light: 0 2px 12px rgba(0, 0, 0, 0.1);
+
+// 过渡
+$transition-duration: 0.3s;
+$transition-duration-fast: 0.2s;

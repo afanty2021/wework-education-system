@@ -1,0 +1,183 @@
+{
+  "pages": [
+    {
+      "path": "pages/login/login",
+      "style": {
+        "navigationBarTitleText": "登录",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "首页",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/schedule/schedule",
+      "style": {
+        "navigationBarTitleText": "课表",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/schedule/detail",
+      "style": {
+        "navigationBarTitleText": "课程详情"
+      }
+    },
+    {
+      "path": "pages/attendance/attendance",
+      "style": {
+        "navigationBarTitleText": "考勤记录",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/homework/homework",
+      "style": {
+        "navigationBarTitleText": "作业",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/homework/detail",
+      "style": {
+        "navigationBarTitleText": "作业详情"
+      }
+    },
+    {
+      "path": "pages/profile/profile",
+      "style": {
+        "navigationBarTitleText": "个人中心"
+      }
+    },
+    {
+      "path": "pages/payment/list",
+      "style": {
+        "navigationBarTitleText": "缴费列表",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/payment/detail",
+      "style": {
+        "navigationBarTitleText": "缴费详情"
+      }
+    },
+    {
+      "path": "pages/payment/pay",
+      "style": {
+        "navigationBarTitleText": "立即支付"
+      }
+    },
+    {
+      "path": "pages/payment/history",
+      "style": {
+        "navigationBarTitleText": "缴费记录",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/leave/list",
+      "style": {
+        "navigationBarTitleText": "请假列表",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/leave/apply",
+      "style": {
+        "navigationBarTitleText": "申请请假"
+      }
+    },
+    {
+      "path": "pages/leave/detail",
+      "style": {
+        "navigationBarTitleText": "请假详情"
+      }
+    },
+    {
+      "path": "pages/leavechange/list",
+      "style": {
+        "navigationBarTitleText": "调课列表",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/leavechange/apply",
+      "style": {
+        "navigationBarTitleText": "申请调课"
+      }
+    },
+    {
+      "path": "pages/leavechange/detail",
+      "style": {
+        "navigationBarTitleText": "调课详情"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "教务管理系统",
+    "navigationBarBackgroundColor": "#ffffff",
+    "backgroundColor": "#f8f8f8",
+    "backgroundTextStyle": "dark",
+    "app-plus": {
+      "background": "#efeff4"
+    }
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#1890ff",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "static/tabbar/home.png",
+        "selectedIconPath": "static/tabbar/home_active.png"
+      },
+      {
+        "pagePath": "pages/schedule/schedule",
+        "text": "课表",
+        "iconPath": "static/tabbar/schedule.png",
+        "selectedIconPath": "static/tabbar/schedule_active.png"
+      },
+      {
+        "pagePath": "pages/attendance/attendance",
+        "text": "考勤",
+        "iconPath": "static/tabbar/attendance.png",
+        "selectedIconPath": "static/tabbar/attendance_active.png"
+      },
+      {
+        "pagePath": "pages/homework/homework",
+        "text": "作业",
+        "iconPath": "static/tabbar/homework.png",
+        "selectedIconPath": "static/tabbar/homework_active.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "static/tabbar/profile.png",
+        "selectedIconPath": "static/tabbar/profile_active.png"
+      }
+    ],
+    "midButton": {
+      "width": "56px",
+      "height": "56px",
+      "text": "考勤",
+      "iconPath": "static/tabbar/scan.png",
+      "iconWidth": "28px"
+    }
+  },
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      "^u-(.*)": "uview-plus/components/u-$1/u-$1.vue",
+      "^uni-(.*)": "uni-ui/components/uni-$1/uni-$1.vue"
+    }
+  }
+}

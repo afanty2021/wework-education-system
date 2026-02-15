@@ -1,0 +1,73 @@
+/**
+ * uni-app 样式变量
+ * uView UI Plus 样式变量覆盖
+ */
+
+// 主题色
+$u-primary: #1890ff;
+$u-primary-light: #e6f7ff;
+$u-primary-dark: #096dd9;
+
+// 辅助色
+$u-success: #52c41a;
+$u-success-light: #f6ffed;
+$u-warning: #faad14;
+$u-warning-light: #fffbe6;
+$u-error: #ff4d4f;
+$u-error-light: #fff2f0;
+$u-info: #1890ff;
+$u-info-light: #e6f7ff;
+
+// 中性色
+$u-main-color: #303133;
+$u-content-color: #606266;
+$u-tips-color: #909399;
+$u-light-color: #c0c4cc;
+$u-border-color: #e4e7ed;
+$u-bg-color: #f5f7fa;
+
+// 字体
+$u-font-size-base: 28rpx;
+$u-font-size-sm: 24rpx;
+$u-font-size-lg: 32rpx;
+$u-font-size-xl: 36rpx;
+$u-font-size-xxl: 44rpx;
+
+// 圆角
+$u-border-radius-sm: 8rpx;
+$u-border-radius-base: 16rpx;
+$u-border-radius-lg: 24rpx;
+$u-border-radius-circle: 50%;
+
+// 阴影
+$u-shadow-sm: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+$u-shadow-base: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
+$u-shadow-lg: 0 8rpx 32rpx rgba(0, 0, 0, 0.15);
+
+// 间距
+$u-spacing-xs: 8rpx;
+$u-spacing-sm: 16rpx;
+$u-spacing-base: 32rpx;
+$u-spacing-lg: 48rpx;
+$u-spacing-xl: 64rpx;
+
+// 组件变量覆盖
+$u-cell-bg-color: #ffffff;
+$u-cell-border-color: #e4e7ed;
+$u-cell-font-size: 30rpx;
+$u-cell-title-color: #303133;
+$u-cell-value-color: #909399;
+
+$u-button-bg-color: #1890ff;
+$u-button-color: #ffffff;
+$u-button-border-radius: 16rpx;
+
+$u-tabs-item-font-size: 30rpx;
+$u-tabs-line-height: 88rpx;
+$u-tabs-line-bg-color: #1890ff;
+
+$u-card-bg-color: #ffffff;
+$u-card-border-radius: 24rpx;
+
+$u-badge-bg-color: #ff4d4f;
+$u-badge-size: 36rpx;
