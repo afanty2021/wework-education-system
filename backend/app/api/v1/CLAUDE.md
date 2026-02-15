@@ -7,6 +7,9 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
+| #3710 | 2:29 PM | 🟣 | Week 1 Task 1.2 - WeChat Work OAuth2 authentication completed | ~317 |
+| #3702 | 2:18 PM | 🟣 | Authentication API routes refactored for WeChat Work OAuth2 | ~225 |
+| #3682 | 2:02 PM | 🟣 | Initial project commit with 112 files created | ~222 |
 | #3653 | 1:55 PM | 🟣 | Attendance API routes created | ~202 |
 | #3651 | " | 🟣 | Schedules API routes scaffold created | ~195 |
 | #3650 | " | 🟣 | Courses API routes created | ~199 |

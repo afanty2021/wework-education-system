@@ -4,7 +4,8 @@ API v1 路由聚合
 """
 from fastapi import APIRouter
 
-from app.api.v1 import auth, courses, students, schedules, contracts, payments, attendance, homeworks
+from app.api.v1 import auth, courses, students, schedules, contracts, payments, attendance, homeworks, tasks, notifications
+from app.api.v1 import payment as payment_gateway
 
 api_router = APIRouter()
 
@@ -62,4 +63,25 @@ api_router.include_router(
     homeworks.router,
     prefix="/homeworks",
     tags=["Homeworks"],
+)
+
+# 定时任务模块
+api_router.include_router(
+    tasks.router,
+    prefix="/tasks",
+    tags=["Tasks"],
+)
+
+# 支付网关模块
+api_router.include_router(
+    payment_gateway.router,
+    prefix="/payment",
+    tags=["Payment Gateway"],
+)
+
+# 通知模块
+api_router.include_router(
+    notifications.router,
+    prefix="/notifications",
+    tags=["Notifications"],
 )
