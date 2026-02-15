@@ -7,8 +7,30 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
+| #3937 | 9:16 PM | ✅ | Marked additional test files as skipped for local development | ~180 |
+| #3933 | 9:11 PM | 🔴 | Added skip decorator to TestSchedulerConfiguration test class | ~200 |
+| #3932 | " | ✅ | [Test Task Module Updated - Skipped Integration Tests] | ~155 |
+| #3923 | 8:54 PM | 🔴 | Fixed test_get_all_tags phone number format issue | ~211 |
+| #3912 | 8:29 PM | 🔴 | [Course Service Test Failing - Missing 'code' Field] | ~202 |
+| #3901 | 8:16 PM | 🟣 | [Comprehensive Test Mock Fixtures Added to conftest.py] | ~339 |
+| #3899 | 7:25 PM | 🔄 | Updated payment callback handler tests to use sync mocks | ~285 |
+| #3898 | 7:23 PM | 🟣 | [Student API Test Suite Created] | ~258 |
+| #3897 | 7:20 PM | 🟣 | Created comprehensive end-to-end business workflow tests | ~336 |
+| #3896 | " | 🔵 | [Test Coverage Assessment in Progress] | ~238 |
+| #3734 | 3:12 PM | 🟣 | 数据模型单元测试已完成 | ~196 |
+| #3726 | 3:01 PM | 🟣 | Model tests created for all 10 data models | ~238 |
+| #3710 | 2:29 PM | 🟣 | Week 1 Task 1.2 - WeChat Work OAuth2 authentication completed | ~317 |
+| #3709 | 2:26 PM | 🔴 | Fixed JWT import in test_auth.py | ~140 |
+| #3708 | 2:25 PM | 🟣 | Authentication test suite significantly expanded with comprehensive coverage | ~238 |
+| #3704 | 2:19 PM | 🟣 | Authentication test suite expanded with comprehensive tests | ~315 |
 | #3675 | 1:59 PM | 🟣 | Pytest conftest.py and Alembic config created | ~192 |
 | #3672 | " | 🟣 | Courses test file created | ~144 |
 | #3670 | " | 🟣 | Authentication test module created | ~145 |
 | #3637 | 1:50 PM | 🟣 | Backend project structure scaffolded with 57 Python files | ~243 |
+
+### Feb 15, 2026
+
+| ID | Time | T | Title | Read |
+|----|------|---|-------|------|
+| #3944 | 12:01 AM | ✅ | Added pytestmark skip to test_api.py integration tests | ~175 |
 </claude-mem-context>
