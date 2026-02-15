@@ -6,15 +6,17 @@ services:
     image: postgres:15-alpine
     container_name: education_db_prod
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      POSTGRES_DB: ${POSTGRES_DB:-education_db}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME:-education_db}
+    ports:
+      - "${DB_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - education_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -24,12 +26,15 @@ services:
   redis:
     image: redis:7-alpine
     container_name: education_redis_prod
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
     volumes:
       - redis_data:/data
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-}
     networks:
       - education_network
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-}", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -42,11 +47,30 @@ services:
       dockerfile: deployment/Dockerfile
     container_name: education_backend_prod
     environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-education_db}
-      - REDIS_URL=redis://redis:6379/0
+      - ENVIRONMENT=production
+      - DATABASE_URL=postgresql://${DB_USER:-postgres}:${DB_PASSWORD}@db:5432/${DB_NAME:-education_db}
+      - REDIS_URL=redis://:${REDIS_PASSWORD:-}@redis:6379/0
       - DEBUG=false
       - HOST=0.0.0.0
       - PORT=8000
+      # 安全配置
+      - SECRET_KEY=${SECRET_KEY}
+      - DB_PASSWORD=${DB_PASSWORD}
+      # 企业微信配置
+      - WEWORK_CORP_ID=${WEWORK_CORP_ID}
+      - WEWORK_AGENT_ID=${WEWORK_AGENT_ID}
+      - WEWORK_SECRET=${WEWORK_SECRET}
+      - WEWORK_TOKEN=${WEWORK_TOKEN}
+      - WEWORK_ENCODING_AES_KEY=${WEWORK_ENCODING_AES_KEY}
+      # 微信支付配置
+      - WECHAT_MCH_ID=${WECHAT_MCH_ID}
+      - WECHAT_MCH_KEY=${WECHAT_MCH_KEY}
+      - WECHAT_NOTIFY_URL=${WECHAT_NOTIFY_URL}
+      # 支付宝配置
+      - ALIPAY_APP_ID=${ALIPAY_APP_ID}
+      - ALIPAY_PRIVATE_KEY=${ALIPAY_PRIVATE_KEY}
+      - ALIPAY_PUBLIC_KEY=${ALIPAY_PUBLIC_KEY}
+      - ALIPAY_NOTIFY_URL=${ALIPAY_NOTIFY_URL}
     volumes:
       - uploads_data:/app/backend/uploads
     networks:
@@ -57,7 +81,7 @@ services:
       redis:
         condition: service_healthy
     restart: unless-stopped
-    command: ["gunicorn", "app.main:app", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000", "--workers", "4"]
+    command: ["gunicorn", "app.main:app", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000", "--workers", "4", "--timeout", "120"]
 
   # Nginx 反向代理
   nginx:
@@ -68,7 +92,9 @@ services:
       - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
       - uploads_data:/var/www/uploads
+      - static_data:/var/www/static
       - certs_data:/etc/nginx/certs
     networks:
       - education_network
@@ -80,6 +106,7 @@ volumes:
   postgres_data:
   redis_data:
   uploads_data:
+  static_data:
   certs_data:
 
 networks:
