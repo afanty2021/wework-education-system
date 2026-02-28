@@ -5,12 +5,22 @@
 企业微信OAuth2登录认证接口
 """
 import logging
+from datetime import timedelta
+from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.services.auth_service import AuthBusinessService
+
+from app.core.config import settings
 from app.core.db import get_db
-from app.core.security import TokenResponse, get_current_user, TokenPayload
+from app.core.security import (
+    TokenResponse,
+    TokenPayload,
+    auth_service,
+    get_current_user,
+)
+from app.services.auth_service import AuthBusinessService
 
 logger = logging.getLogger(__name__)
 
@@ -92,16 +102,8 @@ async def refresh_token(
     Returns:
         TokenResponse: 新的access_token
     """
-    from datetime import timedelta
-    from app.core.config import settings
-
     token = auth_service.create_access_token(
         data={"sub": current_user.sub, "role": current_user.role},
         expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     )
     return TokenResponse(access_token=token)
-
-
-# 导入auth_service以使用refresh_token
-from app.core.security import auth_service as auth_service_module
-auth_service = auth_service_module
