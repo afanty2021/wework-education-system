@@ -7,7 +7,7 @@ services:
     container_name: education_db
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
       POSTGRES_DB: education_db
     ports:
       - "5432:5432"
@@ -42,7 +42,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/education_db
+      - DATABASE_URL=postgresql://postgres:${DB_PASSWORD:-postgres}@db:5432/education_db
       - REDIS_URL=redis://redis:6379/0
       - DEBUG=false
     depends_on:

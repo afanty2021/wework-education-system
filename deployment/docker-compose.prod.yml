@@ -83,6 +83,18 @@ services:
     restart: unless-stopped
     command: ["gunicorn", "app.main:app", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000", "--workers", "4", "--timeout", "120"]
 
+  # 前端管理后台 (可选 - 如果需要独立部署)
+  # frontend:
+  #   build:
+  #     context: ..
+  #     dockerfile: deployment/Dockerfile.frontend
+  #   container_name: education_frontend_prod
+  #   ports:
+  #     - "3000:80"
+  #   networks:
+  #     - education_network
+  #   restart: unless-stopped
+
   # Nginx 反向代理
   nginx:
     image: nginx:alpine
