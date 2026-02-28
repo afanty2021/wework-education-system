@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Plus } from '@element-plus/icons-vue'
 import Pagination from '@/components/Pagination.vue'
-import type { Student, StudentStatus, StudentListParams } from '@/api/students'
+import type { Student, StudentListParams } from '@/api/students'
 import {
   getStudents,
   createStudent,
@@ -11,6 +12,10 @@ import {
   updateStudentStatus,
   getAllTags,
 } from '@/api/students'
+
+defineOptions({
+  name: 'StudentIndex',
+})
 
 const loading = ref(false)
 const studentList = ref<Student[]>([])
@@ -317,107 +322,6 @@ onMounted(() => {
     </el-dialog>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, ref, reactive, onMounted } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus } from '@element-plus/icons-vue'
-import Pagination from '@/components/Pagination.vue'
-import { getStudents, createStudent, updateStudent, deleteStudent, updateStudentStatus, getAllTags } from '@/api/students'
-import type { Student } from '@/api/students'
-
-export default defineComponent({
-  name: 'StudentIndex',
-  components: { Plus, Pagination },
-  setup() {
-    const loading = ref(false)
-    const studentList = ref<Student[]>([])
-    const total = ref(0)
-    const dialogVisible = ref(false)
-    const dialogTitle = ref('新增学员')
-    const isEdit = ref(false)
-    const selectedIds = ref<number[]>([])
-    const allTags = ref<string[]>([])
-    const formRef = ref()
-
-    const queryParams = reactive({ page: 1, pageSize: 10, status: null as number | null, source: '', search: '' })
-
-    const formData = reactive({
-      id: 0, name: '', phone: '', email: '', wechat: '', guardian_name: '', guardian_phone: '', source: '', tags: [] as string[], status: 1, remark: '',
-    })
-
-    const statusOptions = [
-      { label: '全部', value: null },
-      { label: '潜在', value: 1 },
-      { label: '在读', value: 2 },
-      { label: '已流失', value: 3 },
-    ]
-
-    const rules = {
-      name: [{ required: true, message: '请输入学员姓名', trigger: 'blur' }],
-      phone: [{ required: true, message: '请输入联系电话', trigger: 'blur' }],
-    }
-
-    async function fetchStudentList() {
-      loading.value = true
-      try {
-        const data = await getStudents(queryParams)
-        studentList.value = data
-        total.value = data.length
-      } catch (error) {
-        ElMessage.error('获取学员列表失败')
-      } finally {
-        loading.value = false
-      }
-    }
-
-    async function fetchAllTags() {
-      try {
-        allTags.value = await getAllTags()
-      } catch {}
-    }
-
-    function handleSearch() { queryParams.page = 1; fetchStudentList() }
-    function handleReset() { queryParams.search = ''; queryParams.status = null; queryParams.source = ''; queryParams.page = 1; fetchStudentList() }
-    function handlePageChange(page: number) { queryParams.page = page; fetchStudentList() }
-    function handleSizeChange(size: number) { queryParams.pageSize = size; queryParams.page = 1; fetchStudentList() }
-    function handleAdd() { dialogTitle.value = '新增学员'; isEdit.value = false; resetForm(); dialogVisible.value = true }
-    function handleEdit(row: Student) { dialogTitle.value = '编辑学员'; isEdit.value = true; Object.assign(formData, row); dialogVisible.value = true }
-    async function handleDelete(row: Student) {
-      try {
-        await ElMessageBox.confirm(`确定要删除学员"${row.name}"吗？`, '提示', { type: 'warning' })
-        await deleteStudent(row.id)
-        ElMessage.success('删除成功')
-        fetchStudentList()
-      } catch {}
-    }
-    async function handleStatusChange(row: Student, status: number) {
-      try {
-        await updateStudentStatus(row.id, status)
-        ElMessage.success('状态更新成功')
-        fetchStudentList()
-      } catch { ElMessage.error('状态更新失败') }
-    }
-    function handleSelectionChange(selection: Student[]) { selectedIds.value = selection.map((item) => item.id) }
-    async function handleSubmit() {
-      if (!formRef.value) return
-      try {
-        await formRef.value.validate()
-        if (isEdit.value) await updateStudent(formData.id, formData)
-        else await createStudent(formData)
-        ElMessage.success(isEdit.value ? '更新成功' : '创建成功')
-        dialogVisible.value = false
-        fetchStudentList()
-      } catch { ElMessage.error('操作失败') }
-    }
-    function resetForm() { Object.assign(formData, { id: 0, name: '', phone: '', email: '', wechat: '', guardian_name: '', guardian_phone: '', source: '', tags: [], status: 1, remark: '' }); formRef.value?.resetFields() }
-
-    onMounted(() => { fetchStudentList(); fetchAllTags() })
-
-    return { loading, studentList, total, queryParams, statusOptions, formData, rules, dialogVisible, dialogTitle, isEdit, selectedIds, allTags, formRef, handleSearch, handleReset, handlePageChange, handleSizeChange, handleAdd, handleEdit, handleDelete, handleStatusChange, handleSelectionChange, handleSubmit }
-  },
-})
-</script>
 
 <style lang="scss" scoped>
 .student-manage {
