@@ -8,4 +8,15 @@
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
 | #3641 | 1:53 PM | ✅ | Backend requirements.txt created with dependencies | ~197 |
+
+### Feb 15, 2026
+
+| ID | Time | T | Title | Read |
+|----|------|---|-------|------|
+| #4116 | 11:25 PM | ✅ | Updated Celery Redis URLs with password authentication | ~146 |
+| #4115 | 11:24 PM | ✅ | Enabled DATABASE_URL in backend .env with correct credentials | ~155 |
+| #4114 | " | ✅ | Updated Redis password in backend .env | ~134 |
+| #4113 | " | ✅ | Updated PostgreSQL password in backend .env | ~123 |
+| #4107 | 11:12 PM | ✅ | Commented out wechatpay-python-v3 in requirements.txt | ~173 |
+| #4106 | " | ✅ | Removed version pin from wechatpay-python-v3 in requirements.txt | ~147 |
 </claude-mem-context>

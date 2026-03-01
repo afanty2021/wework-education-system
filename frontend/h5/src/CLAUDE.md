@@ -1,3 +1,49 @@
+[根目录](../../../CLAUDE.md) > [frontend](../) > [h5](../) > **src**
+
+# H5 Mobile - 移动端 H5 前端
+
+> 最后更新：2026-02-16
+
+## 模块职责
+
+`frontend/h5/src` 是基于 Vue 3 + Vant 的移动端 H5 前端应用。
+
+## 技术栈
+
+- Vue 3.4+
+- Vant 4+ (移动端 UI 组件库)
+- Vite 5+
+- TypeScript
+
+## 页面结构
+
+```
+views/
+├── Login.vue              # 登录页
+├── Home.vue               # 首页
+├── Schedule.vue           # 课程表
+├── ScheduleDetail.vue     # 课程详情
+├── Attendance.vue         # 考勤
+├── AttendanceRecord.vue   # 考勤记录
+├── Notifications.vue      # 通知列表
+├── NotificationDetail.vue # 通知详情
+├── Profile.vue           # 个人中心
+└── NotFound.vue          # 404 页面
+```
+
+## 组件
+
+```
+components/
+├── MainLayout.vue        # 主布局
+├── TabBar.vue            # 底部导航
+├── ScheduleCard.vue      # 课程卡片
+├── AttendanceCard.vue    # 考勤卡片
+└── NotificationCard.vue  # 通知卡片
+```
+
+## 变更记录
+
 <claude-mem-context>
 # Recent Activity
 
@@ -8,4 +54,11 @@
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
 | #3879 | 6:33 PM | 🟣 | Created H5 mobile frontend App.vue with Vant UI theming | ~162 |
+
+### Feb 16, 2026
+
+| ID | Time | T | Title | Read |
+|----|------|---|-------|------|
+| #4217 | 12:37 PM | ✅ | Cleaned up H5 frontend CLAUDE.md documentation | ~130 |
+| #4154 | 6:03 AM | ✅ | Populated H5 mobile frontend CLAUDE.md with complete documentation | ~213 |
 </claude-mem-context>

@@ -80,19 +80,22 @@ core/
 ```bash
 # 数据库配置
 WEWORK_EDU_DB_USER=postgres
-WEWORK_EDU_DB_PASSWORD=your_password
+WEWORK_EDU_DB_PASSWORD=postgres
 WEWORK_EDU_DB_HOST=localhost
 WEWORK_EDU_DB_PORT=5432
-WEWORK_EDU_DB_NAME=education_db
+WEWORK_EDU_DB_NAME=english_teaching
+
+# Redis 配置
+REDIS_URL=redis://:redis_password@localhost:6379/0
 
 # JWT配置
 WEWORK_EDU_SECRET_KEY=your_secret_key
-
-# 企业微信配置
-WEWORK_CORP_ID=your_corp_id
-WEWORK_SECRET=your_secret
-WEWORK_AGENT_ID=your_agent_id
 ```
+
+**当前开发环境配置**：
+- PostgreSQL 用户: `berton`（本地连接无需密码）
+- 数据库名称: `english_teaching`
+- Redis 密码: `redis_password`
 
 **验证规则**：
 - 生产环境必须设置 `WEWORK_EDU_SECRET_KEY`

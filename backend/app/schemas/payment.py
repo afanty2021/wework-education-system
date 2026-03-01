@@ -31,7 +31,7 @@ class PaymentCreate(PaymentBase):
 class PaymentUpdate(BaseModel):
     """缴费更新模型"""
     amount: Optional[Decimal] = Field(None, gt=0, description="缴费金额")
-    hours: Optional[Decimal] = Field(None, gte=0, description="购买课时数")
+    hours: Optional[Decimal] = Field(None, ge=0, description="购买课时数")
     payment_method: Optional[int] = Field(None, ge=1, le=5, description="缴费方式: 1:微信 2:支付宝 3:现金 4:银行卡 5:转账")
     payment_channel: Optional[str] = Field(None, max_length=20, description="支付渠道")
     transaction_id: Optional[str] = Field(None, max_length=100, description="第三方交易号")
@@ -51,7 +51,7 @@ class PaymentConfirm(BaseModel):
 class PaymentRefund(BaseModel):
     """缴费退款模型"""
     refund_amount: Decimal = Field(..., gt=0, description="退款金额")
-    refund_hours: Optional[Decimal] = Field(None, gte=0, description="退款课时数")
+    refund_hours: Optional[Decimal] = Field(None, ge=0, description="退款课时数")
     refund_reason: Optional[str] = Field(None, max_length=500, description="退款原因")
     remark: Optional[str] = Field(None, max_length=500, description="备注")
 

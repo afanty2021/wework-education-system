@@ -1,3 +1,90 @@
+[根目录](../../../CLAUDE.md) > [backend](../../) > [app](../) > **models**
+
+# Models - 数据模型
+
+> 最后更新：2026-02-16
+
+## 模块职责
+
+`backend/app/models` 包含应用的所有 SQLModel 数据模型，定义了数据库表结构。
+
+## 目录结构
+
+```
+models/
+├── __init__.py           # 模型导出
+├── user.py               # 用户模型
+├── student.py            # 学员模型
+├── course.py             # 课程、教室、部门模型
+├── contract.py           # 合同模型
+├── payment.py            # 支付、退款模型
+├── schedule.py           # 排课模型
+├── attendance.py         # 考勤模型
+├── homework.py           # 作业、提交模型
+├── notification.py       # 通知模型
+├── miniapp_user.py       # 小程序用户模型
+└── task_log.py          # 任务日志模型
+```
+
+## 数据模型清单
+
+| 模型文件 | 模型类 | 数据库表 | 说明 |
+|----------|--------|----------|------|
+| user.py | User | users | 系统用户 |
+| student.py | Student | students | 学员信息 |
+| course.py | Course | courses | 课程 |
+| course.py | Classroom | classrooms | 教室 |
+| course.py | Department | departments | 部门/校区 |
+| contract.py | Contract | contracts | 课时合同 |
+| payment.py | Payment | payments | 支付记录 |
+| payment.py | Refund | refunds | 退款记录 |
+| schedule.py | Schedule | schedules | 排课记录 |
+| attendance.py | Attendance | attendances | 考勤记录 |
+| homework.py | Homework | homeworks | 作业 |
+| homework.py | HomeworkSubmission | homework_submissions | 作业提交 |
+| notification.py | Notification | notifications | 通知 |
+| miniapp_user.py | MiniAppUser | miniapp_users | 小程序用户 |
+| task_log.py | TaskLog | task_logs | 任务日志 |
+| task_log.py | TaskStatistics | task_statistics | 任务统计 |
+
+## 数据库表创建
+
+```python
+from sqlmodel import SQLModel, create_engine
+
+# 导入所有模型
+from app.models.user import User
+from app.models.student import Student
+from app.models.course import Course, Classroom, Department
+from app.models.contract import Contract
+from app.models.payment import Payment, Refund
+from app.models.schedule import Schedule
+from app.models.attendance import Attendance
+from app.models.homework import Homework, HomeworkSubmission
+from app.models.notification import Notification
+from app.models.miniapp_user import MiniAppUser
+from app.models.task_log import TaskLog, TaskStatistics
+
+DATABASE_URL = 'postgresql://berton@localhost:5432/english_teaching'
+engine = create_engine(DATABASE_URL)
+SQLModel.metadata.create_all(engine)
+```
+
+## 变更记录
+
+### 2026-02-16 - 环境搭建同步
+
+- 添加数据库表创建说明
+- 更新数据库连接配置
+
+### 2026-02-14 - 模块初始化
+
+- 创建所有数据模型
+- 配置 SQLModel 字段定义
+
+---
+
+
 <claude-mem-context>
 # Recent Activity
 
@@ -29,4 +116,10 @@
 | #3661 | " | 🟣 | Student SQLModel created | ~198 |
 | #3660 | " | 🟣 | User SQLModel created with authentication fields | ~169 |
 | #3637 | 1:50 PM | 🟣 | Backend project structure scaffolded with 57 Python files | ~243 |
+
+### Feb 16, 2026
+
+| ID | Time | T | Title | Read |
+|----|------|---|-------|------|
+| #4134 | 5:29 AM | ✅ | Updated backend/app/models/CLAUDE.md with database creation guide | ~217 |
 </claude-mem-context>

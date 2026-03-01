@@ -1,3 +1,9 @@
+[根目录](../../../CLAUDE.md) > [backend](../../) > [app](../) > **tasks**
+
+# Tasks - 定时任务模块
+
+> 最后更新：2026-02-16
+
 # 定时任务功能实现总结
 
 ## 实现时间
@@ -452,4 +458,10 @@ scheduler.resume_job("task_id")
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
 | #3637 | 1:50 PM | 🟣 | Backend project structure scaffolded with 57 Python files | ~243 |
+
+### Feb 16, 2026
+
+| ID | Time | T | Title | Read |
+|----|------|---|-------|------|
+| #4140 | 5:41 AM | ✅ | Updated tasks module CLAUDE.md with navigation and timestamps | ~148 |
 </claude-mem-context>

@@ -28,52 +28,6 @@ function handleMenuClick(item: any): void {
     router.push(item.path)
   }
 }
-
-// 递归渲染菜单
-function renderMenu(items: any[], parentPath = ''): any {
-  return items.map((item) => {
-    const fullPath = item.path ? `${parentPath}/${item.path}`.replace(/\/+/g, '/') : ''
-
-    // 有子菜单
-    if (item.children && item.children.length > 0) {
-      return (
-        <el-sub-menu
-          key={fullPath || item.title}
-          index={fullPath || item.title}
-        >
-          {{
-            title: () => (
-              <div class="menu-item-content">
-                {item.icon && <SvgIcon name={item.icon} size={18} />}
-                <span>{item.title}</span>
-              </div>
-            ),
-            default: () => renderMenu(item.children, fullPath),
-          }}
-        </el-sub-menu>
-      )
-    }
-
-    // 无子菜单
-    return (
-      <el-menu-item
-        key={fullPath}
-        index={fullPath}
-        onClick={() => handleMenuClick(item)}
-      >
-        {{
-          title: () => <span>{item.title}</span>,
-          default: () => (
-            <div class="menu-item-content">
-              {item.icon && <SvgIcon name={item.icon} size={18} />}
-              <span>{item.title}</span>
-            </div>
-          ),
-        }}
-      </el-menu-item>
-    )
-  })
-}
 </script>
 
 <template>

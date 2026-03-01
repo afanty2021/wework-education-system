@@ -35,7 +35,7 @@ pytest-asyncio==0.23.3
 
 # Payment
 alipay-sdk-python==3.7.20
-wechatpay-python-v3==1.8.3
+wechatpayv3==2.0.1  # 从 pip 官方源安装
 rsa==4.9
 
 # Utilities

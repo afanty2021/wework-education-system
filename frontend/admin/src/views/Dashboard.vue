@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElCard, ElRow, ElCol, ElStatistic, ElProgress } from 'element-plus'
+import { ElCard, ElRow, ElCol, ElButton, ElTag, ElProgress, ElIcon } from 'element-plus'
 import {
   User,
   Document,
@@ -9,7 +9,6 @@ import {
   Clock,
   TrendCharts,
   ArrowRight,
-  Calendar,
   Bell,
 } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
@@ -339,75 +338,6 @@ function formatTime(time: string): string {
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, onMounted, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { useUserStore } from '@/stores/user'
-
-export default defineComponent({
-  name: 'DashboardPage',
-  setup() {
-    const router = useRouter()
-    const userStore = useUserStore()
-
-    const stats = ref({
-      studentCount: 156,
-      contractCount: 89,
-      todayPayment: 12800,
-      weekSchedules: 24,
-    })
-
-    const todos = ref([
-      { id: 1, title: '张三的合同即将到期', type: 'contract', urgent: true },
-      { id: 2, title: '李四的课程需要排课', type: 'schedule', urgent: false },
-      { id: 3, title: '王五的缴费需要确认', type: 'payment', urgent: true },
-      { id: 4, title: '今日考勤数据待录入', type: 'attendance', urgent: false },
-    ])
-
-    const recentActivities = ref([
-      { id: 1, user: '张三', action: '创建合同', time: '10分钟前', type: 'contract' },
-      { id: 2, user: '李四', action: '完成缴费', time: '30分钟前', type: 'payment' },
-      { id: 3, user: '王五', action: '报名课程', time: '1小时前', type: 'student' },
-      { id: 4, user: '赵六', action: '预约试听', time: '2小时前', type: 'schedule' },
-      { id: 5, user: '钱七', action: '提交作业', time: '3小时前', type: 'homework' },
-    ])
-
-    const quickActions = [
-      { title: '添加学员', icon: 'User', path: '/students/form', color: '#409eff' },
-      { title: '创建合同', icon: 'Document', path: '/contracts/form', color: '#67c23a' },
-      { title: '录入缴费', icon: 'Money', path: '/payments', color: '#e6a23c' },
-      { title: '排课管理', icon: 'Calendar', path: '/schedules', color: '#909399' },
-    ]
-
-    const userName = computed(() => userStore.userName || '管理员')
-
-    function goToDetail(type: string) {
-      const routes: Record<string, string> = {
-        contract: '/contracts',
-        schedule: '/schedules',
-        payment: '/payments',
-        attendance: '/attendance',
-      }
-      router.push(routes[type] || '/')
-    }
-
-    function goToQuickAction(path: string) {
-      router.push(path)
-    }
-
-    return {
-      stats,
-      todos,
-      recentActivities,
-      quickActions,
-      userName,
-      goToDetail,
-      goToQuickAction,
-    }
-  },
-})
-</script>
-
 <style lang="scss" scoped>
 .dashboard {
   padding: 0;
@@ -663,10 +593,10 @@ export default defineComponent({
     flex: 1;
   }
 
-  .activity-size: 14px;
+  .activity-text {
+    font-size: 14px;
     color: #303133;
-    margin-bottom: 4px-text {
-    font;
+    margin-bottom: 4px;
 
     .activity-user {
       font-weight: 600;
