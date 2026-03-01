@@ -1,28 +1,55 @@
+/**
+ * TableSearch 表格搜索组件
+ *
+ * @description 带搜索建议的表格搜索输入框组件，支持防抖搜索和下拉建议
+ *
+ * @example
+ * ```vue
+ * <TableSearch
+ *   v-model="searchText"
+ *   placeholder="请输入搜索内容"
+ *   @search="handleSearch"
+ * />
+ * ```
+ */
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 
-// Props
-const props = withDefaults(
-  defineProps<{
-    modelValue: string
-    placeholder?: string
-    size?: 'small' | 'medium' | 'large'
-    disabled?: boolean
-    clearable?: boolean
-  }>(),
-  {
-    size: 'medium',
-    disabled: false,
-    clearable: true,
-  }
-)
+/**
+ * 组件属性
+ */
+interface Props {
+  /** v-model 绑定值 */
+  modelValue?: string
+  /** 占位符文本 */
+  placeholder?: string
+  /** 输入框尺寸 */
+  size?: 'small' | 'medium' | 'large'
+  /** 是否禁用 */
+  disabled?: boolean
+  /** 是否可清除 */
+  clearable?: boolean
+}
 
-// Emits
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: '',
+  placeholder: '搜索...',
+  size: 'medium',
+  disabled: false,
+  clearable: true,
+})
+
+/**
+ * 组件事件
+ */
 const emit = defineEmits<{
+  /** v-model 更新事件 */
   (e: 'update:modelValue', value: string): void
+  /** 搜索事件 */
+  (e: 'search', value: string): void
 }>()
 
-// 输入值
+// 输入值双向绑定
 const inputValue = computed({
   get: () => props.modelValue,
   set: (val) => emit('update:modelValue', val),
@@ -35,15 +62,18 @@ const keyword = ref('')
 const showSuggestions = ref(false)
 
 // 建议列表
-const suggestions = ref<any[]>([])
+const suggestions = ref<Array<{ label: string; value: string }>>([])
 
 // 加载状态
 const loading = ref(false)
 
-// 下拉框ref
-const suggestionsRef = ref()
+// 下拉框 ref
+const suggestionsRef = ref<HTMLElement>()
 
-// 模拟搜索（实际应用中替换为真实搜索）
+/**
+ * 执行搜索
+ * @param query - 搜索关键字
+ */
 async function handleSearch(query: string): Promise<void> {
   if (!query.trim()) {
     suggestions.value = []
@@ -66,7 +96,9 @@ async function handleSearch(query: string): Promise<void> {
   }
 }
 
-// 防抖搜索
+/**
+ * 防抖搜索
+ */
 let searchTimer: ReturnType<typeof setTimeout>
 function debounceSearch(): void {
   clearTimeout(searchTimer)
@@ -75,21 +107,31 @@ function debounceSearch(): void {
   }, 300)
 }
 
-// 选择建议
-function selectSuggestion(item: any): void {
+/**
+ * 选择建议项
+ * @param item - 选中的建议项
+ */
+function selectSuggestion(item: { label: string; value: string }): void {
   inputValue.value = item.label
   showSuggestions.value = false
   keyword.value = ''
+  emit('search', item.label)
 }
 
-// 清空
+/**
+ * 清除搜索
+ */
 function clearSearch(): void {
   keyword.value = ''
   suggestions.value = []
   showSuggestions.value = false
+  emit('update:modelValue', '')
 }
 
-// 点击外部关闭
+/**
+ * 点击外部关闭下拉框
+ * @param event - 点击事件
+ */
 function handleClickOutside(event: MouseEvent): void {
   const target = event.target as HTMLElement
   if (!target.closest('.table-search')) {
@@ -104,13 +146,17 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
 })
+
+defineOptions({
+  name: 'TableSearch',
+})
 </script>
 
 <template>
   <div class="table-search" :class="`size-${size}`">
     <el-input
       v-model="keyword"
-      :placeholder="placeholder || '搜索...'"
+      :placeholder="placeholder"
       :disabled="disabled"
       :clearable="clearable"
       prefix-icon="Search"
@@ -133,116 +179,6 @@ onUnmounted(() => {
     </transition>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, ref, computed, onMounted, onUnmounted } from 'vue'
-
-export default defineComponent({
-  name: 'TableSearch',
-  props: {
-    modelValue: {
-      type: String,
-      default: '',
-    },
-    placeholder: {
-      type: String,
-      default: '',
-    },
-    size: {
-      type: String as () => 'small' | 'medium' | 'large',
-      default: 'medium',
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-    clearable: {
-      type: Boolean,
-      default: true,
-    },
-  },
-  emits: ['update:modelValue'],
-  setup(props, { emit }) {
-    const keyword = ref('')
-    const showSuggestions = ref(false)
-    const suggestions = ref<any[]>([])
-    const loading = ref(false)
-
-    const inputValue = computed({
-      get: () => props.modelValue,
-      set: (val) => emit('update:modelValue', val),
-    })
-
-    async function handleSearch(query: string) {
-      if (!query.trim()) {
-        suggestions.value = []
-        return
-      }
-
-      loading.value = true
-      showSuggestions.value = true
-
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 300))
-        suggestions.value = [
-          { label: `${query} - 选项1`, value: `${query}-1` },
-          { label: `${query} - 选项2`, value: `${query}-2` },
-          { label: `${query} - 选项3`, value: `${query}-3` },
-        ].filter((item) => item.label.toLowerCase().includes(query.toLowerCase()))
-      } finally {
-        loading.value = false
-      }
-    }
-
-    let searchTimer: ReturnType<typeof setTimeout>
-    function debounceSearch() {
-      clearTimeout(searchTimer)
-      searchTimer = setTimeout(() => {
-        handleSearch(keyword.value)
-      }, 300)
-    }
-
-    function selectSuggestion(item: any) {
-      inputValue.value = item.label
-      showSuggestions.value = false
-      keyword.value = ''
-    }
-
-    function clearSearch() {
-      keyword.value = ''
-      suggestions.value = []
-      showSuggestions.value = false
-    }
-
-    function handleClickOutside(event: MouseEvent) {
-      const target = event.target as HTMLElement
-      if (!target.closest('.table-search')) {
-        showSuggestions.value = false
-      }
-    }
-
-    onMounted(() => {
-      document.addEventListener('click', handleClickOutside)
-    })
-
-    onUnmounted(() => {
-      document.removeEventListener('click', handleClickOutside)
-    })
-
-    return {
-      keyword,
-      showSuggestions,
-      suggestions,
-      loading,
-      inputValue,
-      handleSearch,
-      debounceSearch,
-      selectSuggestion,
-      clearSearch,
-    }
-  },
-})
-</script>
 
 <style lang="scss" scoped>
 .table-search {
