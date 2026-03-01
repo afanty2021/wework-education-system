@@ -58,7 +58,7 @@ service.interceptors.response.use(
     // 根据状态码判断
     if (response.status === 200) {
       // 成功响应
-      if (res.code === 0 || response.config.headers?.responseType === 'blob') {
+      if (res.code === 0 || res.access_token || response.config.headers?.responseType === 'blob') {
         return res
       }
 

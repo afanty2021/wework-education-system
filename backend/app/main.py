@@ -12,7 +12,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app.api import exceptions
 from app.core.config import settings
-from app.core.db import engine, create_db_and_tables
+from app.core.db import create_db_and_tables
 from app.core.logging import setup_logging
 from app.core.scheduler import scheduler, register_default_tasks
 from app.api.v1 import api_router

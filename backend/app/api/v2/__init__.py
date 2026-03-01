@@ -10,6 +10,9 @@ from fastapi import APIRouter
 
 api_router_v2 = APIRouter(prefix="/v2")
 
+# 别名，用于 main.py 导入
+api_router = api_router_v2
+
 # 示例：未来添加的新端点
 # from app.api.v2 import new_endpoints
 # api_router_v2.include_router(new_endpoints.router, prefix="/new", tags=["New Features"])

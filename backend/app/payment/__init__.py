@@ -26,9 +26,7 @@ from app.payment.wechat import (
     WeChatPayConfigError,
     WeChatPayService,
     WeChatPaySignatureError,
-    fen_to_yuan,
     wechat_pay_service,
-    yuan_to_fen,
 )
 
 __all__ = [
@@ -38,8 +36,6 @@ __all__ = [
     "WeChatPayAPIError",
     "WeChatPayConfigError",
     "WeChatPaySignatureError",
-    "fen_to_yuan",
-    "yuan_to_fen",
     "wechat_pay_service",
     # 支付宝
     "AliPayService",

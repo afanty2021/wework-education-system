@@ -30,6 +30,9 @@ class Settings(BaseSettings):
     HOST: str = "0.0.0.0"
     PORT: int = 8000
 
+    # 前端配置
+    FRONTEND_URL: str = "http://localhost:3000"
+
     # CORS 配置
     CORS_ORIGINS: List[str] = Field(default_factory=lambda: [
         "http://localhost:3000",

@@ -26,9 +26,12 @@ from app.payment.wechat import (
     WeChatPayConfigError,
     WeChatPayService,
     WeChatPaySignatureError,
-    fen_to_yuan,
-    yuan_to_fen,
+    wechat_pay_service,
 )
+
+# 工具函数
+yuan_to_fen = WeChatPayService.yuan_to_fen
+fen_to_yuan = WeChatPayService.fen_to_yuan
 from app.schemas.payment import PaymentCreate, PaymentResponse
 from app.services.payment_service import (
     ContractNotFoundError,

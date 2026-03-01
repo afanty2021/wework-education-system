@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { Loading } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
 import SvgIcon from '@/components/SvgIcon.vue'
+import axios from 'axios'
 
 const router = useRouter()
 const route = useRoute()
@@ -12,12 +14,20 @@ const userStore = useUserStore()
 // 登录方式
 const loginType = ref<'wework' | 'password'>('wework')
 
-// 表单数据
-const formData = reactive({
+// 企业微信登录相关
+const weworkQrcodeUrl = ref('')
+const weworkAuthUrl = ref('')
+const weworkLoading = ref(true)
+
+// 账号密码登录表单
+const formData = ref({
   username: '',
   password: '',
   remember: false,
 })
+
+const formRef = ref()
+const loading = ref(false)
 
 // 表单验证规则
 const rules = {
@@ -31,40 +41,42 @@ const rules = {
   ],
 }
 
-// 表单ref
-const formRef = ref()
-
-// 是否加载中
-const loading = ref(false)
-
-// 企业微信二维码
-const weworkCode = ref('')
-const weworkQrcodeUrl = ref('')
-
 // 获取企业微信登录二维码
 async function getWeWorkQrcode(): Promise<void> {
   try {
-    // TODO: 调用获取企业微信二维码接口
-    // const response = await getWeWorkQrcodeApi()
-    // weworkQrcodeUrl.value = response.url
-    weworkQrcodeUrl.value = 'https://placeholder.com/qrcode'
+    weworkLoading.value = true
+    const response = await axios.get('/api/v1/auth/wework/url')
+    weworkAuthUrl.value = response.data.auth_url
+
+    // 使用公共二维码生成服务将 URL 转为二维码
+    weworkQrcodeUrl.value = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(response.data.auth_url)}`
+
+    // 轮询检查是否有回调（通过检查 URL 参数或 token）
+    startPolling()
   } catch (error) {
-    ElMessage.error('获取登录二维码失败')
+    console.error('获取登录二维码失败:', error)
+    ElMessage.error('获取登录二维码失败，请稍后重试')
+    weworkLoading.value = false
+  } finally {
+    weworkLoading.value = false
   }
 }
 
 // 轮询检查登录状态
 let pollTimer: ReturnType<typeof setInterval> | null = null
 function startPolling(): void {
+  stopPolling()
   pollTimer = setInterval(async () => {
-    if (weworkCode.value) {
+    // 检查 URL 参数中是否有 code（企业微信回调）
+    const urlParams = new URLSearchParams(window.location.search)
+    const code = urlParams.get('code')
+    const state = urlParams.get('state')
+
+    if (code) {
       try {
-        await userStore.login(weworkCode.value)
-        ElMessage.success('登录成功')
-        const redirect = (route.query.redirect as string) || '/'
-        router.push(redirect)
+        await handleWeworkCallback(code, state)
       } catch (error) {
-        ElMessage.error('登录失败，请重试')
+        console.error('登录失败:', error)
       }
     }
   }, 2000)
@@ -77,25 +89,50 @@ function stopPolling(): void {
   }
 }
 
-// 账号密码登录
-async function handlePasswordLogin(): Promise<void> {
-  if (!formRef.value) return
-
+// 处理企业微信回调
+async function handleWeworkCallback(code: string, state: string | null): Promise<void> {
   try {
-    await formRef.value.validate()
-    loading.value = true
-
-    // TODO: 实现账号密码登录
-    // const response = await passwordLoginApi(formData.username, formData.password)
-    // userStore.setToken(response.access_token)
-    // await userStore.fetchUserInfo()
+    const response = await axios.post('/api/v1/auth/wework', { code })
+    userStore.setToken(response.data.access_token)
+    await userStore.fetchUserInfo()
 
     ElMessage.success('登录成功')
     const redirect = (route.query.redirect as string) || '/'
     router.push(redirect)
-  } catch (error) {
+
+    // 清除 URL 参数
+    window.history.replaceState({}, document.title, window.location.pathname)
+  } catch (error: any) {
     console.error('登录失败:', error)
-    ElMessage.error('登录失败，请检查用户名和密码')
+    ElMessage.error(error.response?.data?.detail || '登录失败，请重试')
+  }
+}
+
+// 账号密码登录
+async function handlePasswordLogin(): Promise<void> {
+  // 跳过表单验证，直接尝试登录
+  if (!formData.value.username || !formData.value.password) {
+    ElMessage.error('请输入用户名和密码')
+    return
+  }
+
+  try {
+    loading.value = true
+
+    // 调用后端账号密码登录接口
+    const response = await axios.post('/api/v1/auth/login', {
+      username: formData.value.username,
+      password: formData.value.password,
+    })
+    userStore.setToken(response.data.access_token)
+    await userStore.fetchUserInfo()
+
+    ElMessage.success('登录成功')
+    const redirect = (route.query.redirect as string) || '/'
+    router.push(redirect)
+  } catch (error: any) {
+    console.error('登录失败:', error)
+    ElMessage.error(error.response?.data?.detail || error.message || '登录失败')
   } finally {
     loading.value = false
   }
@@ -106,7 +143,6 @@ function switchLoginType(type: 'wework' | 'password'): void {
   loginType.value = type
   if (type === 'wework') {
     getWeWorkQrcode()
-    startPolling()
   } else {
     stopPolling()
   }
@@ -122,12 +158,18 @@ onMounted(() => {
   if (userStore.isLoggedIn) {
     router.push('/')
   } else {
-    // 默认显示企业微信登录
-    switchLoginType('wework')
+    // 检查是否有回调参数
+    const urlParams = new URLSearchParams(window.location.search)
+    const code = urlParams.get('code')
+    if (code) {
+      handleWeworkCallback(code, urlParams.get('state'))
+    } else {
+      // 默认显示企业微信登录
+      switchLoginType('wework')
+    }
   }
 })
 
-// 组件卸载时停止轮询
 onUnmounted(() => {
   stopPolling()
 })
@@ -169,7 +211,7 @@ onUnmounted(() => {
           <transition name="fade">
             <div v-if="loginType === 'wework'" class="wework-login">
               <div class="qrcode-area">
-                <div v-if="weworkQrcodeUrl" class="qrcode">
+                <div v-if="weworkQrcodeUrl && !weworkLoading" class="qrcode">
                   <img :src="weworkQrcodeUrl" alt="企业微信登录二维码" />
                 </div>
                 <div v-else class="qrcode-loading">
@@ -240,131 +282,6 @@ onUnmounted(() => {
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, ref, reactive, onMounted, onUnmounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { ElMessage } from 'element-plus'
-import { Loading } from '@element-plus/icons-vue'
-import { useUserStore } from '@/stores/user'
-
-export default defineComponent({
-  name: 'LoginPage',
-  components: {
-    Loading,
-  },
-  setup() {
-    const router = useRouter()
-    const route = useRoute()
-    const userStore = useUserStore()
-
-    const loginType = ref<'wework' | 'password'>('wework')
-
-    const formData = reactive({
-      username: '',
-      password: '',
-      remember: false,
-    })
-
-    const rules = {
-      username: [
-        { required: true, message: '请输入用户名', trigger: 'blur' },
-        { min: 2, max: 20, message: '用户名长度在2-20个字符', trigger: 'blur' },
-      ],
-      password: [
-        { required: true, message: '请输入密码', trigger: 'blur' },
-        { min: 6, max: 20, message: '密码长度在6-20个字符', trigger: 'blur' },
-      ],
-    }
-
-    const formRef = ref()
-    const loading = ref(false)
-    const weworkQrcodeUrl = ref('')
-    const weworkCode = ref('')
-    let pollTimer: ReturnType<typeof setInterval> | null = null
-
-    async function getWeWorkQrcode() {
-      weworkQrcodeUrl.value = 'https://placeholder.com/qrcode'
-    }
-
-    function startPolling() {
-      pollTimer = setInterval(async () => {
-        if (weworkCode.value) {
-          try {
-            // await userStore.login(weworkCode.value)
-            ElMessage.success('登录成功')
-            router.push('/')
-          } catch (error) {
-            ElMessage.error('登录失败')
-          }
-        }
-      }, 2000)
-    }
-
-    function stopPolling() {
-      if (pollTimer) {
-        clearInterval(pollTimer)
-        pollTimer = null
-      }
-    }
-
-    async function handlePasswordLogin() {
-      if (!formRef.value) return
-
-      try {
-        await formRef.value.validate()
-        loading.value = true
-
-        ElMessage.success('登录成功')
-        router.push('/')
-      } catch (error) {
-        ElMessage.error('登录失败')
-      } finally {
-        loading.value = false
-      }
-    }
-
-    function switchLoginType(type: 'wework' | 'password') {
-      loginType.value = type
-      if (type === 'wework') {
-        getWeWorkQrcode()
-        startPolling()
-      } else {
-        stopPolling()
-      }
-    }
-
-    function resetForm() {
-      formRef.value?.resetFields()
-    }
-
-    onMounted(() => {
-      if (userStore.isLoggedIn) {
-        router.push('/')
-      } else {
-        switchLoginType('wework')
-      }
-    })
-
-    onUnmounted(() => {
-      stopPolling()
-    })
-
-    return {
-      loginType,
-      formData,
-      rules,
-      formRef,
-      loading,
-      weworkQrcodeUrl,
-      weworkCode,
-      handlePasswordLogin,
-      switchLoginType,
-      resetForm,
-    }
-  },
-})
-</script>
 
 <style lang="scss" scoped>
 .login-page {

@@ -17,7 +17,6 @@ from typing import Dict, Optional
 from fastapi import APIRouter, Depends, Form, HTTPException, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.v1.payment import alipay_service
 from app.core.db import get_db
 from app.payment import (
     alipay_service,

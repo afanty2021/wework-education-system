@@ -757,3 +757,12 @@ class WeChatPayService:
 
 # 创建服务实例
 wechat_pay_service = WeChatPayService()
+
+__all__ = [
+    "WeChatPayService",
+    "WeChatPayError",
+    "WeChatPayAPIError",
+    "WeChatPayConfigError",
+    "WeChatPaySignatureError",
+    "wechat_pay_service",
+]

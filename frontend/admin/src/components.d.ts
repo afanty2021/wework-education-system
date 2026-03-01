@@ -24,5 +24,6 @@ declare module 'vue' {
     Sidebar: typeof import('./components/Sidebar.vue')['default']
     SvgIcon: typeof import('./components/SvgIcon.vue')['default']
     TableSearch: typeof import('./components/TableSearch.vue')['default']
+    TableSkeleton: typeof import('./components/TableSkeleton.vue')['default']
   }
 }

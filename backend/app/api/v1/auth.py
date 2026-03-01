@@ -24,7 +24,17 @@ from app.services.auth_service import AuthBusinessService
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/auth", tags=["认证"])
+router = APIRouter(tags=["认证"])
+
+# 开发模式账号密码 (生产环境应删除)
+DEV_USERNAME = "admin"
+DEV_PASSWORD = "admin123"
+
+
+class LoginRequest(BaseModel):
+    """账号密码登录请求"""
+    username: str
+    password: str
 
 
 class WeWorkLoginRequest(BaseModel):
@@ -32,10 +42,37 @@ class WeWorkLoginRequest(BaseModel):
     code: str
 
 
+@router.post("/login", response_model=TokenResponse)
+async def login(
+    request: LoginRequest,
+):
+    """
+    账号密码登录 (开发模式)
+
+    开发测试用，生产环境应使用企业微信登录
+    """
+    if request.username == DEV_USERNAME and request.password == DEV_PASSWORD:
+        token = auth_service.create_access_token(
+            data={"sub": "1", "role": "admin"},
+            expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        )
+        return TokenResponse(access_token=token)
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="用户名或密码错误"
+    )
+
+
 class WeChatMiniAppLoginRequest(BaseModel):
     """微信小程序登录请求"""
     code: str
     user_info: dict | None = None
+
+
+class WeWorkAuthUrlResponse(BaseModel):
+    """企业微信授权 URL 响应"""
+    auth_url: str
+    state: str
 
 
 class UserInfoResponse(BaseModel):
@@ -45,6 +82,34 @@ class UserInfoResponse(BaseModel):
     avatar: str | None = None
     role: str
     wework_id: str | None = None
+
+
+@router.get("/wework/url", response_model=WeWorkAuthUrlResponse)
+async def get_wework_auth_url():
+    """
+    获取企业微信授权URL
+
+    返回企业微信OAuth2授权链接，前端可直接跳转或生成二维码
+    """
+    import secrets
+    from app.core.config import settings
+
+    # 生成随机 state 用于防止 CSRF 攻击
+    state = secrets.token_urlsafe(16)
+
+    # 构建企业微信授权 URL
+    # https://developer.work.weixin.qq.com/document/path/91019
+    redirect_uri = f"{settings.FRONTEND_URL}/login/callback"
+    auth_url = (
+        f"https://open.work.weixin.qq.com/wwopen/sso/qrConnect?"
+        f"appid={settings.WEWORK_CORP_ID}"
+        f"&agentid={settings.WEWORK_AGENT_ID}"
+        f"&redirect_uri={redirect_uri}"
+        f"&state={state}"
+        f"&usertype=member"
+    )
+
+    return WeWorkAuthUrlResponse(auth_url=auth_url, state=state)
 
 
 @router.post("/wework", response_model=TokenResponse)
