@@ -5,8 +5,8 @@
 说明: 学员信息表
 """
 
-from typing import Optional
-from sqlmodel import SQLModel, Field
+from typing import Optional, List
+from sqlmodel import SQLModel, Field, JSON
 from datetime import datetime, date
 
 
@@ -25,7 +25,7 @@ class Student(SQLModel, table=True):
     parent_mobile: Optional[str] = Field(default=None, max_length=20, description="家长手机号")
     source: Optional[str] = Field(default=None, max_length=50, description="来源: 线上推广/朋友介绍/地推等")
     status: int = Field(default=1, description="状态: 1:潜在 2:在读 3:已流失")
-    tags: Optional[str] = Field(default=None, description="标签 JSON数组")
+    tags: Optional[List[str]] = Field(default=None, sa_type=JSON, description="标签列表")
     notes: Optional[str] = Field(default=None, description="备注")
 
     created_at: datetime = Field(default_factory=datetime.now)

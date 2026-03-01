@@ -18,7 +18,7 @@ class StudentBase(BaseModel):
     parent_wework_id: Optional[str] = Field(None, max_length=64, description="家长企业微信ID")
     parent_mobile: Optional[str] = Field(None, max_length=20, description="家长手机号")
     source: Optional[str] = Field(None, max_length=50, description="来源: 线上推广/朋友介绍/地推等")
-    tags: Optional[str] = Field(None, description="标签 JSON数组")
+    tags: Optional[List[str]] = Field(None, description="标签列表")
     notes: Optional[str] = Field(None, description="备注")
 
 
@@ -45,7 +45,7 @@ class StudentUpdate(BaseModel):
     parent_mobile: Optional[str] = Field(None, max_length=20, description="家长手机号")
     source: Optional[str] = Field(None, max_length=50, description="来源")
     status: Optional[int] = Field(None, ge=1, le=3, description="状态: 1:潜在 2:在读 3:已流失")
-    tags: Optional[str] = Field(None, description="标签 JSON数组")
+    tags: Optional[List[str]] = Field(None, description="标签列表")
     notes: Optional[str] = Field(None, description="备注")
 
 

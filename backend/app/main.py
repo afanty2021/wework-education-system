@@ -16,6 +16,7 @@ from app.core.db import engine, create_db_and_tables
 from app.core.logging import setup_logging
 from app.core.scheduler import scheduler, register_default_tasks
 from app.api.v1 import api_router
+from app.api.v2 import api_router as api_router_v2
 
 # 初始化日志配置
 setup_logging(level="DEBUG" if settings.DEBUG else "INFO")
@@ -65,6 +66,8 @@ def create_app() -> FastAPI:
 
     # 注册路由
     app.include_router(api_router, prefix="/api/v1")
+    # API v2 预留
+    app.include_router(api_router_v2, prefix="/api")
 
     # 注册全局异常处理器
     app.add_exception_handler(Exception, exceptions.global_exception_handler)
